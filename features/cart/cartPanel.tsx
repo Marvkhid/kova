@@ -1,45 +1,43 @@
 'use client';
 // ============================================================
-// KOVA — /cart
-// Full cart page: items list, quantity +/-, remove,
-// order summary with subtotal + total, checkout CTA.
+// KOVA — CartPanel
+// Slide-in drawer from the right.
+// Triggered globally — import useCartPanel to open/close.
 // ============================================================
-import { createContext, useCallback, useContext, useState, type ReactNode } from 'react';
-import { useRouter } from 'next/navigation';
+
+import { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useCart } from '@/features/cart/CartContext';
-import { useToast } from '../Component/ToastContext';
-import { ImageSlot } from '../Component/ImageSlot';
+import { useToast } from '@/app/Component/ToastContext';
 import { formatPrice } from '@/lib/utils';
 import type { CartItem } from '@/lib/types';
-
-// ── Cart item row ─────────────────────────────────────────
 interface CartPanelContextValue {
   isOpen:  boolean;
   open:    () => void;
   close:   () => void;
   toggle:  () => void;
 }
-
+ 
 const CartPanelContext = createContext<CartPanelContextValue | null>(null);
-
+ 
 export function useCartPanel(): CartPanelContextValue {
   const ctx = useContext(CartPanelContext);
   if (!ctx) throw new Error('useCartPanel must be used inside <CartPanelProvider>');
   return ctx;
 }
-
+ 
 // ── Empty State ───────────────────────────────────────────
-
+ 
 function EmptyPanel({ onClose }: { onClose: () => void }) {
   const router = useRouter();
-
+ 
   function handleBrowse() {
     // Close panel first, then navigate after paint
     onClose();
     setTimeout(() => router.push('/shopping'), 50);
   }
-
+ 
   return (
     <div className="flex flex-col items-center justify-center flex-1 py-16 text-center px-6">
       <div className="text-5xl mb-4">🛒</div>
@@ -61,14 +59,14 @@ function EmptyPanel({ onClose }: { onClose: () => void }) {
     </div>
   );
 }
-
+ 
 // ── Cart Item Row ─────────────────────────────────────────
-
+ 
 function PanelCartItem({ item }: { item: CartItem }) {
   const { updateQuantity, removeItem } = useCart();
   const { addToast } = useToast();
   const { product, quantity } = item;
-
+ 
   return (
     <div className="flex gap-3 py-4 border-b border-black/[0.06] last:border-0">
       <div className="w-16 h-16 rounded-[10px] overflow-hidden bg-[#EDE8DF] flex-shrink-0">
@@ -78,7 +76,7 @@ function PanelCartItem({ item }: { item: CartItem }) {
           style={{ width: '100%', height: '100%', objectFit: 'cover' }}
         />
       </div>
-
+ 
       <div className="flex-1 min-w-0">
         <p className="text-[0.68rem] text-[#E8622A] uppercase tracking-[0.06em] font-medium">
           {product.seller}
@@ -89,7 +87,7 @@ function PanelCartItem({ item }: { item: CartItem }) {
         >
           {product.name}
         </p>
-
+ 
         <div className="flex items-center justify-between mt-2">
           <div className="flex items-center gap-1 bg-[#F0EBE2] rounded-full p-[2px]">
             <button
@@ -116,7 +114,7 @@ function PanelCartItem({ item }: { item: CartItem }) {
           </p>
         </div>
       </div>
-
+ 
       <button
         onClick={() => {
           removeItem(product.id);
@@ -130,22 +128,22 @@ function PanelCartItem({ item }: { item: CartItem }) {
     </div>
   );
 }
-
+ 
 // ── Cart Panel ────────────────────────────────────────────
-
+ 
 function CartPanel({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const router = useRouter();
   const { items, total, itemCount, clearCart } = useCart();
   const { addToast } = useToast();
-
+ 
   const shipping   = total >= 50 ? 0 : 4.99;
   const grandTotal = total + shipping;
-
+ 
   function handleCheckout() {
     onClose();
     setTimeout(() => router.push('/cart'), 50);
   }
-
+ 
   return (
     <>
       {/* Backdrop */}
@@ -155,7 +153,7 @@ function CartPanel({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }
         className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[70] transition-opacity duration-300"
         style={{ opacity: isOpen ? 1 : 0, pointerEvents: isOpen ? 'auto' : 'none' }}
       />
-
+ 
       {/* Drawer */}
       <div
         role="dialog"
@@ -197,7 +195,7 @@ function CartPanel({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }
             </button>
           </div>
         </div>
-
+ 
         {/* Items */}
         <div className="flex-1 overflow-y-auto px-6">
           {items.length === 0 ? (
@@ -210,7 +208,7 @@ function CartPanel({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }
             </div>
           )}
         </div>
-
+ 
         {/* Footer */}
         {items.length > 0 && (
           <div className="border-t border-black/[0.07] px-6 py-5">
@@ -231,7 +229,7 @@ function CartPanel({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }
                 </p>
               )}
             </div>
-
+ 
             <div className="flex justify-between items-baseline mb-5 pt-3 border-t border-black/[0.07]">
               <span className="font-bold text-[#0D0D0D]">Total</span>
               <span
@@ -241,7 +239,7 @@ function CartPanel({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }
                 {formatPrice(grandTotal)}
               </span>
             </div>
-
+ 
             <div className="flex flex-col gap-2">
               <button
                 onClick={handleCheckout}
@@ -256,7 +254,7 @@ function CartPanel({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }
                 View full cart
               </button>
             </div>
-
+ 
             <p className="text-center text-[0.7rem] text-black/30 mt-3 flex items-center justify-center gap-1">
               <span>🔒</span> Secure checkout · Buyer protection
             </p>
@@ -266,16 +264,16 @@ function CartPanel({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }
     </>
   );
 }
-
+ 
 // ── Provider ──────────────────────────────────────────────
-
+ 
 export function CartPanelProvider({ children }: { children: ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
-
+ 
   const open   = useCallback(() => setIsOpen(true),  []);
   const close  = useCallback(() => setIsOpen(false), []);
   const toggle = useCallback(() => setIsOpen(v => !v), []);
-
+ 
   return (
     <CartPanelContext.Provider value={{ isOpen, open, close, toggle }}>
       {children}
@@ -283,3 +281,4 @@ export function CartPanelProvider({ children }: { children: ReactNode }) {
     </CartPanelContext.Provider>
   );
 }
+ 

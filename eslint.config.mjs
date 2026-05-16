@@ -1,18 +1,36 @@
 import { defineConfig, globalIgnores } from "eslint/config";
-import nextVitals from "eslint-config-next/core-web-vitals";
-import nextTs from "eslint-config-next/typescript";
+import tseslint from "typescript-eslint";
+import prettier from "eslint-config-prettier";
 
-const eslintConfig = defineConfig([
-  ...nextVitals,
-  ...nextTs,
-  // Override default ignores of eslint-config-next.
+export default defineConfig([
+  // Ignore build artifacts
   globalIgnores([
-    // Default ignores of eslint-config-next:
     ".next/**",
     "out/**",
     "build/**",
-    "next-env.d.ts",
+    "node_modules/**",
+    "dist/**",
   ]),
-]);
 
-export default eslintConfig;
+  // Backend (NestJS + Prisma)
+  {
+    files: ["src/**/*.ts", "prisma/**/*.ts"],
+    plugins: {
+      "@typescript-eslint": tseslint.plugin,
+    },
+    languageOptions: {
+      parser: tseslint.parser,
+    },
+    rules: {
+      ...tseslint.configs.recommended.rules,
+
+      // IMPORTANT: relax noisy rules for backend dev
+      "@typescript-eslint/no-unsafe-assignment": "off",
+      "@typescript-eslint/no-unsafe-call": "off",
+      "@typescript-eslint/no-unsafe-member-access": "off",
+    },
+  },
+
+  // Prettier (must always be last)
+  prettier,
+]);

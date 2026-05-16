@@ -107,7 +107,7 @@ export function HeroSection() {
         >
           <div className="relative w-full h-full rounded-[24px] overflow-hidden">
             {/* SWAP: <Image src="/images/hero-main.jpg" alt="Marketplace" fill className="object-cover" /> */}
-            <Image src="/images/hero-main.jpg" alt="Marketplace" fill className="object-cover" />
+            <Image src="/images/hero-main.jpg" alt="Marketplace"  sizes="(max-width: 768px) 100vw, 50vw" loading='eager' fill className="object-cover" />
             {/* Subtle overlay */}
             <div className="absolute inset-0 bg-gradient-to-br from-[#2A5C45]/10 to-transparent pointer-events-none" />
           </div>
@@ -245,7 +245,7 @@ export function AboutSection() {
           {/* Image */}
           <div className="relative h-[340px] rounded-[20px] overflow-hidden">
             {/* SWAP: <Image src="/images/about-sellers.jpg" alt="Sellers using KOVA" fill className="object-cover" /> */}
-            <Image src="/images/about-sellers.jpg" alt="About section — seller dashboard or product upload" fill className="object-cover" />
+            <Image src="/images/about-sellers.jpg" alt="About section — seller dashboard or product upload"  sizes="(max-width: 768px) 100vw, 50vw" fill className="object-cover" />
           </div>
           {/* Stats */}
           <div className="grid grid-cols-2 gap-4">

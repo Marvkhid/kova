@@ -4,43 +4,37 @@ import { useEffect } from 'react';
 
 export function ScrollRevealInit() {
   useEffect(() => {
-    // Add class to body — this activates the hidden state for reveal elements
-    // If JS is slow, elements stay visible (no flash of invisible content)
-    document.body.classList.add('reveal-animate');
-
-    const selectors = [
-      '.reveal',
-      '.reveal-stagger',
-      '.reveal-left',
-      '.reveal-right',
-      '.reveal-scale',
-    ].join(', ');
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('is-visible');
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      {
-        threshold:  0.08,
-        rootMargin: '0px 0px -32px 0px',
-      }
-    );
-
-    // Query after a tick so all sections are in the DOM
     const timer = setTimeout(() => {
+      // Add class to body — activates hidden state for reveal elements
+      document.body.classList.add('reveal-ready');
+
+      const selectors = [
+        '.reveal',
+        '.reveal-stagger',
+        '.reveal-left',
+        '.reveal-right',
+        '.reveal-scale',
+      ].join(', ');
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.05, rootMargin: '0px 0px -20px 0px' }
+      );
+
       document.querySelectorAll<HTMLElement>(selectors)
         .forEach(el => observer.observe(el));
-    }, 50);
+    }, 150);
 
     return () => {
       clearTimeout(timer);
-      observer.disconnect();
-      document.body.classList.remove('reveal-animate');
+      document.body.classList.remove('reveal-ready');
     };
   }, []);
 

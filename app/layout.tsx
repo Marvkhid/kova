@@ -6,16 +6,19 @@ import { CartProvider }     from '@/features/cart/CartContext';
 import { ToastProvider }    from './Component/ToastContext';
 import { ToastContainer }   from './Component/ToastContainer';
 import { Navbar }           from './Component/Navbar';
+import { BottomNav }        from './Component/BottomNav';
 import { Footer }           from './Component/Footer';
 import { ScrollRevealInit } from './Component/ScrollRevealInit';
-
+import { CartPanelProvider } from '@/features/cart/cartPanel';
+import { ClerkProvider } from '@clerk/nextjs';
+  
 const syne = Syne({
   subsets:  ['latin'],
   weight:   ['400', '700', '800'],
   variable: '--font-display',
   display:  'swap',
 });
-
+ 
 const dmSans = DM_Sans({
   subsets:  ['latin'],
   weight:   ['300', '400', '500', '600'],
@@ -23,7 +26,7 @@ const dmSans = DM_Sans({
   variable: '--font-body',
   display:  'swap',
 });
-
+ 
 export const metadata: Metadata = {
   title:       'KOVA — Konnect · Offer · Value · Anywhere',
   description: 'The marketplace where buyers and sellers meet, transact, and grow.',
@@ -32,23 +35,32 @@ export const metadata: Metadata = {
     apple: '/icon.svg',
   },
 };
-
+ 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${syne.variable} ${dmSans.variable}`}>
-      <body className="min-h-screen flex flex-col">
-        <CartProvider>
-          <ToastProvider>
-            <Navbar />
-            <main className="flex-1 pt-[64px]">
-              {children}
-            </main>
-            <Footer />
-            <ToastContainer />
-            <ScrollRevealInit />
-          </ToastProvider>
-        </CartProvider>
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang="en" className={`${syne.variable} ${dmSans.variable}`}>
+        <head>
+          <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+        </head>
+        <body className="min-h-screen flex flex-col">
+          <CartProvider>
+            <ToastProvider>
+              <CartPanelProvider>
+                <Navbar />
+                <main className="flex-1 pt-[64px] pb-[72px] md:pb-0">
+                  {children}
+                </main>
+                <Footer />
+                <BottomNav />
+                <ToastContainer />
+                <ScrollRevealInit />
+              </CartPanelProvider>
+            </ToastProvider>
+          </CartProvider>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
+ 
