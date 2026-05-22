@@ -9,8 +9,7 @@ import { SectionLabel } from '../ui/Atom';
 import { PRODUCTS } from '../../lib/types/data/products';
 import Link from 'next/link';
 
-const SERVICE_PRODUCTS = PRODUCTS.filter(p => p.category === 'services');
-// If no services in data yet, show all with a note
+const SERVICE_PRODUCTS = PRODUCTS.filter((p) => p.category === 'services');
 const DISPLAY = SERVICE_PRODUCTS.length > 0 ? SERVICE_PRODUCTS : PRODUCTS;
 
 const SERVICE_CATEGORIES = [
@@ -25,28 +24,23 @@ const SERVICE_CATEGORIES = [
 export default function ServicesPage() {
   return (
     <div className="min-h-screen bg-[#F5F0E8]">
-
       {/* Header */}
-      <div className="bg-[#2A5C45] pt-10 pb-14 overflow-hidden relative">
+      <div className="bg-[#2A5C45] pt-8 sm:pt-10 pb-10 sm:pb-14 overflow-hidden relative">
         <div
           aria-hidden="true"
-          className="absolute w-[400px] h-[400px] rounded-full bg-white/[0.05] -top-[100px] -right-[80px] pointer-events-none"
+          className="absolute w-[320px] sm:w-[400px] h-[320px] sm:h-[400px] rounded-full bg-white/[0.05] -top-[100px] -right-[80px] pointer-events-none"
         />
-        <div className="max-w-[1280px] mx-auto px-5 md:px-8 relative z-10">
+        <div className="max-w-[1280px] mx-auto px-4 sm:px-5 md:px-8 relative z-10">
           <SectionLabel light>Freelance & services</SectionLabel>
           <h1
             className="font-extrabold text-[#F5F0E8] leading-[0.97] tracking-[-0.03em] mb-4"
-            style={{
-              fontFamily: 'var(--font-display)',
-              fontSize: 'clamp(2.2rem, 5vw, 4rem)',
-            }}
+            style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.9rem, 9vw, 4rem)' }}
           >
-            Hire talented<br />
-            <span style={{ WebkitTextStroke: '2px #F5F0E8', color: 'transparent' }}>
-              creators.
-            </span>
+            Hire talented
+            <br />
+            <span style={{ WebkitTextStroke: '2px #F5F0E8', color: 'transparent' }}>creators.</span>
           </h1>
-          <p className="text-[#F5F0E8]/55 text-[1rem] max-w-[400px] mb-8">
+          <p className="text-[#F5F0E8]/55 text-[0.92rem] sm:text-[1rem] max-w-[430px] mb-7 sm:mb-8 leading-relaxed">
             From podcast editing to brand design — find expert sellers ready to work on your project.
           </p>
           <Link
@@ -58,21 +52,20 @@ export default function ServicesPage() {
         </div>
       </div>
 
-      <div className="max-w-[1280px] mx-auto px-5 md:px-8 py-10">
-
+      <div className="max-w-[1280px] mx-auto px-4 sm:px-5 md:px-8 py-8 sm:py-10">
         {/* Service categories */}
-        <div className="mb-12">
+        <div className="mb-10 sm:mb-12">
           <SectionLabel>Browse by service type</SectionLabel>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mt-4">
-            {SERVICE_CATEGORIES.map(cat => (
+            {SERVICE_CATEGORIES.map((cat) => (
               <Link
                 key={cat.label}
                 href={cat.href}
-                className="bg-white rounded-[14px] px-4 py-4 border border-black/[0.07] hover:-translate-y-1 hover:shadow-md hover:border-[#E8622A]/30 transition-all duration-250 text-center group"
+                className="bg-white rounded-[12px] sm:rounded-[14px] px-3.5 sm:px-4 py-3.5 sm:py-4 border border-black/[0.07] hover:-translate-y-1 hover:shadow-md hover:border-[#E8622A]/30 transition-all duration-250 text-center group"
               >
-                <span className="text-2xl block mb-2">{cat.icon}</span>
+                <span className="text-[1.35rem] sm:text-2xl block mb-2">{cat.icon}</span>
                 <span
-                  className="text-[0.8rem] font-medium text-black/70 group-hover:text-[#0D0D0D]"
+                  className="text-[0.74rem] sm:text-[0.8rem] font-medium text-black/70 group-hover:text-[#0D0D0D]"
                   style={{ fontFamily: 'var(--font-display)' }}
                 >
                   {cat.label}
@@ -84,31 +77,30 @@ export default function ServicesPage() {
 
         {/* Service listings */}
         <div>
-          <div className="flex items-end justify-between mb-6">
+          <div className="flex items-end justify-between gap-3 mb-5 sm:mb-6">
             <div>
               <SectionLabel>Available now</SectionLabel>
               <h2
                 className="font-extrabold text-[#0D0D0D] leading-[1.1] tracking-[-0.02em]"
-                style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.4rem, 3vw, 2rem)' }}
+                style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.25rem, 5.2vw, 2rem)' }}
               >
                 Services on KOVA
               </h2>
             </div>
             <Link
               href="/shopping?category=services"
-              className="text-[0.875rem] font-medium text-[#E8622A] border-b border-[#E8622A] pb-[1px] hover:opacity-65 transition-opacity"
+              className="text-[0.8rem] sm:text-[0.875rem] font-medium text-[#E8622A] border-b border-[#E8622A] pb-[1px] hover:opacity-65 transition-opacity whitespace-nowrap"
             >
               See all →
             </Link>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-            {DISPLAY.map(p => (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+            {DISPLAY.map((p) => (
               <ProductCard key={p.id} product={p} />
             ))}
           </div>
         </div>
-
       </div>
     </div>
   );

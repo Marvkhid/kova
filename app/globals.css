@@ -4,19 +4,17 @@
 
 /* ============================================================
    KOVA — Global Styles
-   No dark mode. Clean, single-theme system.
    ============================================================ */
 
 :root {
   --font-display: 'Syne', sans-serif;
   --font-body:    'DM Sans', sans-serif;
 
-  --nav-h:      64px;
-  --max-w:      1280px;
-  --ease-out:   cubic-bezier(0.22, 1, 0.36, 1);
-  --ease-in-out:cubic-bezier(0.65, 0, 0.35, 1);
+  --nav-h:       64px;
+  --max-w:       1280px;
+  --ease-out:    cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
 
-  /* Brand colors */
   --black:        #0D0D0D;
   --cream:        #F5F0E8;
   --cream-dark:   #EDE8DF;
@@ -29,28 +27,21 @@
   --gray-400:     #B5AFA5;
   --gray-600:     #7A746C;
 
-  /* Shadows */
   --shadow-sm:     0 2px 8px rgba(0,0,0,0.06);
   --shadow-md:     0 8px 24px rgba(0,0,0,0.10);
   --shadow-lg:     0 20px 48px rgba(0,0,0,0.13);
   --shadow-orange: 0 8px 28px rgba(232,98,42,0.32);
 
-  /* Image slots */
   --slot-bg:     #EDE8DF;
   --slot-border: #B5AFA5;
   --slot-text:   #7A746C;
 
-  /* Scrollbar */
   --scrollbar-track: #EDE8DF;
   --scrollbar-thumb: #B5AFA5;
 }
 
 /* ── Reset ──────────────────────────────────────────────── */
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 html {
   scroll-behavior: smooth;
@@ -98,86 +89,72 @@ ul, ol { list-style: none; }
   text-align: center;
   padding: 0 0.75rem;
 }
+.img-slot.fill { position: absolute; inset: 0; border-radius: 0; border: none; }
 
-.img-slot.fill {
-  position: absolute;
-  inset: 0;
-  border-radius: 0;
-  border: none;
-}
-
-/* ── Scroll reveal ──────────────────────────────────────── */
-.reveal {
-  opacity: 0;
-  transform: translateY(28px);
-  transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
-}
-.reveal.is-visible { opacity: 1; transform: translateY(0); }
-
+/* ── Scroll Reveal — progressive enhancement ────────────── */
+/* Step 1: everything visible by default (no JS = no broken page) */
+.reveal,
+.reveal-left,
+.reveal-right,
+.reveal-scale,
 .reveal-stagger > * {
-  opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.6s var(--ease-out), transform 0.6s var(--ease-out);
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
 }
-.reveal-stagger.is-visible > *:nth-child(1) { transition-delay: 0.05s; opacity: 1; transform: none; }
-.reveal-stagger.is-visible > *:nth-child(2) { transition-delay: 0.12s; opacity: 1; transform: none; }
-.reveal-stagger.is-visible > *:nth-child(3) { transition-delay: 0.19s; opacity: 1; transform: none; }
-.reveal-stagger.is-visible > *:nth-child(4) { transition-delay: 0.26s; opacity: 1; transform: none; }
-.reveal-stagger.is-visible > *:nth-child(5) { transition-delay: 0.33s; opacity: 1; transform: none; }
 
-.reveal-left {
-  opacity: 0;
-  transform: translateX(-28px);
-  transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
-}
-.reveal-right {
-  opacity: 0;
-  transform: translateX(28px);
-  transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
-}
-.reveal-scale {
-  opacity: 0;
-  transform: scale(0.94);
-  transition: opacity 0.6s var(--ease-out), transform 0.6s var(--ease-out);
-}
-.reveal-left.is-visible,
-.reveal-right.is-visible,
-.reveal-scale.is-visible { opacity: 1; transform: none; }
+/* Step 2: once JS runs and adds .reveal-ready to body, hide elements */
+body.reveal-ready .reveal           { opacity: 0; transform: translateY(28px); }
+body.reveal-ready .reveal-left      { opacity: 0; transform: translateX(-28px); }
+body.reveal-ready .reveal-right     { opacity: 0; transform: translateX(28px); }
+body.reveal-ready .reveal-scale     { opacity: 0; transform: scale(0.94); }
+body.reveal-ready .reveal-stagger > * { opacity: 0; transform: translateY(24px); }
+
+/* Step 3: show when .is-visible is added by IntersectionObserver */
+body.reveal-ready .reveal.is-visible,
+body.reveal-ready .reveal-left.is-visible,
+body.reveal-ready .reveal-right.is-visible,
+body.reveal-ready .reveal-scale.is-visible,
+body.reveal-ready .reveal-stagger.is-visible > * { opacity: 1; transform: none; }
+
+body.reveal-ready .reveal-stagger.is-visible > *:nth-child(1) { transition-delay: 0.05s; }
+body.reveal-ready .reveal-stagger.is-visible > *:nth-child(2) { transition-delay: 0.12s; }
+body.reveal-ready .reveal-stagger.is-visible > *:nth-child(3) { transition-delay: 0.19s; }
+body.reveal-ready .reveal-stagger.is-visible > *:nth-child(4) { transition-delay: 0.26s; }
+body.reveal-ready .reveal-stagger.is-visible > *:nth-child(5) { transition-delay: 0.33s; }
 
 /* ── Animations ─────────────────────────────────────────── */
 @keyframes marquee {
   from { transform: translateX(0); }
   to   { transform: translateX(-50%); }
 }
-
 @keyframes float-slow {
   0%, 100% { transform: translateY(0) scale(1); }
   50%       { transform: translateY(-18px) scale(1.03); }
 }
-
 @keyframes float-medium {
   0%, 100% { transform: translateY(0) rotate(0deg); }
   50%       { transform: translateY(14px) rotate(4deg); }
 }
-
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(22px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-
 @keyframes fadeIn {
   from { opacity: 0; }
   to   { opacity: 1; }
 }
-
 @keyframes toastIn {
   from { opacity: 0; transform: translateY(12px) scale(0.95); }
   to   { opacity: 1; transform: translateY(0) scale(1); }
 }
-
 @keyframes toastOut {
   from { opacity: 1; transform: translateY(0) scale(1); }
   to   { opacity: 0; transform: translateY(8px) scale(0.95); }
+}
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
 }
 
 /* ── Utilities ──────────────────────────────────────────── */
@@ -187,9 +164,7 @@ ul, ol { list-style: none; }
   margin: 0 auto;
   padding: 0 2.5rem;
 }
-
 .section-pad { padding: 6rem 0; }
-
 .sr-only {
   position: absolute;
   width: 1px; height: 1px;
@@ -203,106 +178,4 @@ ul, ol { list-style: none; }
 @media (max-width: 768px) {
   .container   { padding: 0 1.25rem; }
   .section-pad { padding: 4rem 0; }
-}
-
-/* ── Reveal: visible by default, animates when .is-visible added ── */
-.reveal,
-.reveal-stagger > *,
-.reveal-left,
-.reveal-right,
-.reveal-scale {
-  opacity: 1;
-  transform: none;
-  transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
-}
-
-/* Only animate if JS has run and added the class */
-.reveal-animate .reveal           { opacity: 0; transform: translateY(28px); }
-.reveal-animate .reveal-stagger > *{ opacity: 0; transform: translateY(24px); }
-.reveal-animate .reveal-left      { opacity: 0; transform: translateX(-28px); }
-.reveal-animate .reveal-right     { opacity: 0; transform: translateX(28px); }
-.reveal-animate .reveal-scale     { opacity: 0; transform: scale(0.94); }
-
-.reveal-animate .reveal.is-visible,
-.reveal-animate .reveal-left.is-visible,
-.reveal-animate .reveal-right.is-visible,
-.reveal-animate .reveal-scale.is-visible { opacity: 1; transform: none; }
-
-.reveal-animate .reveal-stagger.is-visible > *:nth-child(1) { opacity: 1; transform: none; transition-delay: 0.05s; }
-.reveal-animate .reveal-stagger.is-visible > *:nth-child(2) { opacity: 1; transform: none; transition-delay: 0.12s; }
-.reveal-animate .reveal-stagger.is-visible > *:nth-child(3) { opacity: 1; transform: none; transition-delay: 0.19s; }
-.reveal-animate .reveal-stagger.is-visible > *:nth-child(4) { opacity: 1; transform: none; transition-delay: 0.26s; }
-.reveal-animate .reveal-stagger.is-visible > *:nth-child(5) { opacity: 1; transform: none; transition-delay: 0.33s; }
-
-/* ============================================================
-   SCROLL REVEAL — PROGRESSIVE ENHANCEMENT FIX
-   Elements are VISIBLE by default.
-   Only hidden after JS adds .reveal-ready to <body>.
-   This prevents blank pages if observer fires late.
-   ============================================================ */
-
-/* Default: everything visible */
-.reveal,
-.reveal-left,
-.reveal-right,
-.reveal-scale {
-  opacity: 1;
-  transform: none;
-}
-
-.reveal-stagger > * {
-  opacity: 1;
-  transform: none;
-}
-
-/* Only animate when body has .reveal-ready — set by JS */
-body.reveal-ready .reveal {
-  opacity: 0;
-  transform: translateY(28px);
-  transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
-}
-
-body.reveal-ready .reveal-left {
-  opacity: 0;
-  transform: translateX(-28px);
-  transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
-}
-
-body.reveal-ready .reveal-right {
-  opacity: 0;
-  transform: translateX(28px);
-  transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
-}
-
-body.reveal-ready .reveal-scale {
-  opacity: 0;
-  transform: scale(0.94);
-  transition: opacity 0.6s var(--ease-out), transform 0.6s var(--ease-out);
-}
-
-body.reveal-ready .reveal-stagger > * {
-  opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.6s var(--ease-out), transform 0.6s var(--ease-out);
-}
-
-/* When visible */
-body.reveal-ready .reveal.is-visible,
-body.reveal-ready .reveal-left.is-visible,
-body.reveal-ready .reveal-right.is-visible,
-body.reveal-ready .reveal-scale.is-visible {
-  opacity: 1;
-  transform: none;
-}
-
-body.reveal-ready .reveal-stagger.is-visible > *:nth-child(1) { opacity: 1; transform: none; transition-delay: 0.05s; }
-body.reveal-ready .reveal-stagger.is-visible > *:nth-child(2) { opacity: 1; transform: none; transition-delay: 0.12s; }
-body.reveal-ready .reveal-stagger.is-visible > *:nth-child(3) { opacity: 1; transform: none; transition-delay: 0.19s; }
-body.reveal-ready .reveal-stagger.is-visible > *:nth-child(4) { opacity: 1; transform: none; transition-delay: 0.26s; }
-body.reveal-ready .reveal-stagger.is-visible > *:nth-child(5) { opacity: 1; transform: none; transition-delay: 0.33s; }
-
-/* Shimmer for skeleton loaders */
-@keyframes shimmer {
-  0%   { background-position: -200% 0; }
-  100% { background-position:  200% 0; }
 }

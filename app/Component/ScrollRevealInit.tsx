@@ -5,7 +5,6 @@ import { useEffect } from 'react';
 export function ScrollRevealInit() {
   useEffect(() => {
     const timer = setTimeout(() => {
-      // Add class to body — activates hidden state for reveal elements
       document.body.classList.add('reveal-ready');
 
       const selectors = [
@@ -16,21 +15,36 @@ export function ScrollRevealInit() {
         '.reveal-scale',
       ].join(', ');
 
+      const els = Array.from(
+        document.querySelectorAll<HTMLElement>(selectors),
+      );
+
+      // Fallback: if IntersectionObserver is unavailable, show all
+      if (!('IntersectionObserver' in window)) {
+        els.forEach((el) => el.classList.add('is-visible'));
+        return;
+      }
+
       const observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach(entry => {
+        (entries, obs) => {
+          entries.forEach((entry) => {
             if (entry.isIntersecting) {
-              entry.target.classList.add('is-visible');
-              observer.unobserve(entry.target);
+              (entry.target as HTMLElement).classList.add('is-visible');
+              obs.unobserve(entry.target);
             }
           });
         },
-        { threshold: 0.05, rootMargin: '0px 0px -20px 0px' }
+        {
+          threshold: 0.05,
+          rootMargin: '0px 0px -20px 0px',
+        },
       );
 
-      document.querySelectorAll<HTMLElement>(selectors)
-        .forEach(el => observer.observe(el));
-    }, 150);
+      els.forEach((el) => observer.observe(el));
+
+      // Cleanup observer when component unmounts
+      return () => observer.disconnect();
+    }, 120);
 
     return () => {
       clearTimeout(timer);

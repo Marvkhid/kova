@@ -21,30 +21,44 @@ const STATUS_STYLES: Record<string, string> = {
 
 export function DashboardOrders() {
   return (
-    <div className="bg-white rounded-[20px] border border-black/[0.07] overflow-hidden">
-      <div className="px-6 py-5 border-b border-black/[0.06]">
-        <h2 className="font-bold text-[1rem] text-[#0D0D0D]" style={{ fontFamily: 'var(--font-display)' }}>
+    <div className="bg-white rounded-[16px] sm:rounded-[20px] border border-black/[0.07] overflow-hidden">
+      <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-black/[0.06]">
+        <h2 className="font-bold text-[0.95rem] sm:text-[1rem] text-[#0D0D0D]" style={{ fontFamily: 'var(--font-display)' }}>
           Recent orders
         </h2>
-        <p className="text-[0.75rem] text-black/40 mt-0.5">Last 7 days</p>
+        <p className="text-[0.72rem] sm:text-[0.75rem] text-black/40 mt-0.5">Last 7 days</p>
       </div>
 
+      {/* Safe overflow for very small widths */}
       <div className="divide-y divide-black/[0.04]">
-        {ORDERS.map(order => (
-          <div key={order.id} className="flex items-center gap-4 px-6 py-4 hover:bg-black/[0.018] transition-colors">
-            {/* Order ID + product */}
-            <div className="flex-1 min-w-0">
-              <p className="font-semibold text-[0.85rem] text-[#0D0D0D] truncate">{order.product}</p>
-              <p className="text-[0.72rem] text-black/40 mt-0.5">{order.id} · {order.buyer} · {order.time}</p>
+        {ORDERS.map((order) => (
+          <div
+            key={order.id}
+            className="px-4 sm:px-6 py-3.5 sm:py-4 hover:bg-black/[0.018] transition-colors"
+          >
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+              {/* Order info */}
+              <div className="flex-1 min-w-0">
+                <p className="font-semibold text-[0.82rem] sm:text-[0.85rem] text-[#0D0D0D] truncate">
+                  {order.product}
+                </p>
+                <p className="text-[0.68rem] sm:text-[0.72rem] text-black/40 mt-0.5 leading-relaxed">
+                  {order.id} · {order.buyer} · {order.time}
+                </p>
+              </div>
+
+              {/* Right side (amount + status) */}
+              <div className="flex items-center justify-between sm:justify-end gap-2 sm:gap-3">
+                <p className="font-bold text-[0.86rem] sm:text-[0.9rem] text-[#0D0D0D] flex-shrink-0">
+                  ${order.amount}
+                </p>
+                <span
+                  className={`text-[0.64rem] sm:text-[0.68rem] font-semibold px-2.5 py-1 rounded-full capitalize flex-shrink-0 ${STATUS_STYLES[order.status]}`}
+                >
+                  {order.status}
+                </span>
+              </div>
             </div>
-
-            {/* Amount */}
-            <p className="font-bold text-[0.9rem] text-[#0D0D0D] flex-shrink-0">${order.amount}</p>
-
-            {/* Status */}
-            <span className={`text-[0.68rem] font-semibold px-2.5 py-1 rounded-full capitalize flex-shrink-0 ${STATUS_STYLES[order.status]}`}>
-              {order.status}
-            </span>
           </div>
         ))}
       </div>
@@ -52,7 +66,7 @@ export function DashboardOrders() {
   );
 }
 
-// ── Earnings Chart (SVG bar chart) ────────────────────────
+// ── Earnings Chart (SVG-like bar chart using div bars) ────────────────────────
 
 const WEEKLY_DATA = [
   { day: 'Mon', amount: 320 },
@@ -65,39 +79,43 @@ const WEEKLY_DATA = [
 ];
 
 export function EarningsChart() {
-  const max = Math.max(...WEEKLY_DATA.map(d => d.amount));
+  const max = Math.max(...WEEKLY_DATA.map((d) => d.amount));
   const chartH = 120;
 
   return (
-    <div className="bg-white rounded-[20px] border border-black/[0.07] p-6">
-      <div className="flex items-start justify-between mb-6">
+    <div className="bg-white rounded-[16px] sm:rounded-[20px] border border-black/[0.07] p-4 sm:p-6">
+      <div className="flex items-start justify-between gap-3 mb-5 sm:mb-6">
         <div>
-          <h2 className="font-bold text-[1rem] text-[#0D0D0D]" style={{ fontFamily: 'var(--font-display)' }}>
+          <h2 className="font-bold text-[0.95rem] sm:text-[1rem] text-[#0D0D0D]" style={{ fontFamily: 'var(--font-display)' }}>
             Weekly earnings
           </h2>
-          <p className="text-[0.75rem] text-black/40 mt-0.5">This week</p>
+          <p className="text-[0.72rem] sm:text-[0.75rem] text-black/40 mt-0.5">This week</p>
         </div>
-        <div className="text-right">
-          <p className="font-extrabold text-[1.4rem] text-[#0D0D0D] leading-none" style={{ fontFamily: 'var(--font-display)' }}>
+
+        <div className="text-right flex-shrink-0">
+          <p className="font-extrabold text-[1.15rem] sm:text-[1.4rem] text-[#0D0D0D] leading-none" style={{ fontFamily: 'var(--font-display)' }}>
             $3,350
           </p>
-          <p className="text-[0.72rem] text-[#2A5C45] font-medium mt-0.5">↑ 18% vs last week</p>
+          <p className="text-[0.66rem] sm:text-[0.72rem] text-[#2A5C45] font-medium mt-0.5">↑ 18% vs last week</p>
         </div>
       </div>
 
-      {/* SVG bar chart */}
-      <div className="flex items-end gap-2 h-[140px]">
-        {WEEKLY_DATA.map((d, i) => {
+      {/* Bars */}
+      <div className="flex items-end gap-1.5 sm:gap-2 h-[130px] sm:h-[140px]">
+        {WEEKLY_DATA.map((d) => {
           const barH = Math.round((d.amount / max) * chartH);
           const isMax = d.amount === max;
+
           return (
-            <div key={d.day} className="flex-1 flex flex-col items-center gap-2 group">
+            <div key={d.day} className="flex-1 flex flex-col items-center gap-1.5 sm:gap-2 group min-w-0">
               {/* Amount tooltip on hover */}
-              <span className="text-[0.65rem] font-semibold text-[#E8622A] opacity-0 group-hover:opacity-100 transition-opacity">
+              <span className="text-[0.58rem] sm:text-[0.65rem] font-semibold text-[#E8622A] opacity-0 group-hover:opacity-100 transition-opacity">
                 ${d.amount}
               </span>
+
               {/* Bar */}
-              <div className="w-full relative rounded-t-[6px] transition-all duration-300 group-hover:brightness-90"
+              <div
+                className="w-full relative rounded-t-[5px] sm:rounded-t-[6px] transition-all duration-300 group-hover:brightness-90"
                 style={{
                   height: `${barH}px`,
                   background: isMax
@@ -106,8 +124,9 @@ export function EarningsChart() {
                   minHeight: 8,
                 }}
               />
+
               {/* Day label */}
-              <span className="text-[0.68rem] text-black/35 font-medium">{d.day}</span>
+              <span className="text-[0.62rem] sm:text-[0.68rem] text-black/35 font-medium">{d.day}</span>
             </div>
           );
         })}

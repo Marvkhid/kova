@@ -1,9 +1,3 @@
-// ============================================================
-// KOVA — Landing Page (app/page.tsx)
-// Assembles all sections in order.
-// Each section lives in its own file — add/remove freely.
-// ============================================================
-
 import { HeroSection, MarqueeStrip, AboutSection } from './Component/HeroSection';
 import {
   CategoriesSection,
@@ -18,44 +12,34 @@ import {
   SellerCTASection,
   FinalCTASection,
 } from './Component/ContentSections';
+import { apiFetch } from '@/lib/api';
 
-export default function HomePage() {
+export default async function HomePage() {
+  let featuredProducts: any[] = [];
+  let allProducts: any[] = [];
+
+  try {
+    [featuredProducts, allProducts] = await Promise.all([
+      apiFetch('/products/featured'),
+      apiFetch('/products'),
+    ]);
+  } catch (err) {
+    console.error('Homepage product fetch failed:', err);
+  }
+
   return (
     <>
-      {/* 1. Hero */}
       <HeroSection />
-
-      {/* 2. Marquee — always visible, no padding */}
       <MarqueeStrip />
-
-      {/* 3. What KOVA does */}
       <AboutSection />
-
-      {/* 4. Categories */}
       <CategoriesSection />
-
-      {/* 5. Featured products */}
-      <FeaturedProductsSection />
-
-      {/* 6. Trust numbers */}
+      <FeaturedProductsSection products={featuredProducts} />
       <TrustStrip />
-
-      {/* 7. How it works */}
       <HowItWorksSection />
-
-      {/* 8. Trending products */}
-      <TrendingSection />
-
-      {/* 9. Testimonials */}
+      <TrendingSection products={allProducts} />
       <TestimonialsSection />
-
-      {/* 10. Brand story */}
       <StorySection />
-
-      {/* 11. Seller CTA */}
       <SellerCTASection />
-
-      {/* 12. Final CTA */}
       <FinalCTASection />
     </>
   );

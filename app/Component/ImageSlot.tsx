@@ -2,34 +2,28 @@
 // ============================================================
 // KOVA — ImageSlot
 // A flexible image placeholder.
-// Replace the entire <ImageSlot> with <Image> or <img> when
-// you have your real assets. The parent div controls sizing.
-//
-// Usage:
-//   <div className="relative w-full h-64">
-//     <ImageSlot label="Hero image" fill />
-//   </div>
-//
-//   Swap:
-//   <div className="relative w-full h-64">
-//     <Image src="/images/hero.jpg" alt="Hero" fill className="object-cover" />
-//   </div>
+// Replace <ImageSlot> with <Image> or <img> when real assets are ready.
 // ============================================================
 
 interface ImageSlotProps {
-  label?:     string;
-  fill?:      boolean;   // position: absolute, inset-0 (for overlapping layouts)
+  label?: string;
+  fill?: boolean;      // absolute inset-0 for overlay/fill usage
   className?: string;
-  rounded?:   boolean;
+  rounded?: boolean;   // full circle when true
 }
 
-export function ImageSlot({ label, fill = false, className = '', rounded = false }: ImageSlotProps) {
+export function ImageSlot({
+  label,
+  fill = false,
+  className = '',
+  rounded = false,
+}: ImageSlotProps) {
   const base = [
-    'flex items-center justify-content-center',
+    'flex items-center justify-center', // ✅ fixed
     'bg-[#EDE8DF] border border-dashed border-[#B5AFA5]',
-    'text-[#7A746C] text-[0.68rem] font-medium tracking-[0.08em] uppercase',
-    'text-center px-3',
-    fill   ? 'absolute inset-0' : 'relative w-full h-full',
+    'text-[#7A746C] text-[0.62rem] sm:text-[0.68rem] font-medium tracking-[0.08em] uppercase',
+    'text-center px-2 sm:px-3',
+    fill ? 'absolute inset-0' : 'relative w-full h-full',
     rounded ? 'rounded-full' : 'rounded-[inherit]',
     className,
   ].join(' ');
