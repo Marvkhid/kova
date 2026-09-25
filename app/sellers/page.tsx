@@ -1,11 +1,14 @@
 // ============================================================
 // KOVA — /sellers
 // Seller landing: what you get, how it works, FAQ, CTA.
-// Honest copy — no invented seller counts or payout figures.
+// Plus the live shop directory — every real store from the API
+// (seeded demo stores and new signups alike). No mock data.
 // ============================================================
 
 import Link from 'next/link';
 import { SectionLabel } from '../ui/Atom';
+import { api } from '@/lib/api';
+import type { FeaturedSeller } from '@/lib/types';
 
 const PERKS = [
   { photo: '/images/seed/photo/furniture/furniture-p04.jpg', title: 'Physical or digital', desc: 'Sell handmade goods and shipped products, or courses, templates, ebooks and designs. The listing flow adapts to what you are selling.' },
@@ -47,7 +50,21 @@ function FaqItem({ q, a }: { q: string; a: string }) {
   );
 }
 
-export default function SellersPage() {
+// Shop directory is dynamic — new stores appear immediately.
+export const dynamic = 'force-dynamic';
+
+async function getSellers(): Promise<FeaturedSeller[]> {
+  try {
+    return await api.getFeaturedSellers();
+  } catch {
+    // API unreachable — show the honest empty state, never fake sellers.
+    return [];
+  }
+}
+
+export default async function SellersPage() {
+  const sellers = await getSellers();
+
   return (
     <div className="min-h-screen bg-[#F5F0E8]">
       {/* Hero */}
@@ -82,6 +99,115 @@ export default function SellersPage() {
               See how it works
             </Link>
           </div>
+        </div>
+      </section>
+
+      {/* ── Live shop directory — real stores from the API ── */}
+      <section className="py-12 sm:py-16 md:py-20 bg-[#EDE8DF]">
+        <div className="max-w-[1280px] mx-auto px-4 sm:px-5 md:px-8">
+          <div className="flex items-end justify-between gap-4 mb-6 sm:mb-7">
+            <div>
+              <SectionLabel>The shops</SectionLabel>
+              <h2
+                className="font-extrabold text-[#0D0D0D] leading-tight tracking-[-0.02em]"
+                style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.4rem, 5vw, 2.2rem)' }}
+              >
+                Marketplace sellers
+              </h2>
+            </div>
+            <span className="flex-shrink-0 text-[0.78rem] text-black/40">
+              {sellers.length} {sellers.length === 1 ? 'shop' : 'shops'}
+            </span>
+          </div>
+
+          {sellers.length === 0 ? (
+            <div className="bg-white rounded-[18px] border border-black/[0.07] p-8 sm:p-10 text-center">
+              <p className="text-[0.9rem] text-black/50 mb-1 font-medium">Shops are waking up</p>
+              <p className="text-[0.8rem] text-black/40">
+                Store listings come straight from the marketplace API — nothing is faked.
+                If this stays empty, the API is not reachable.
+              </p>
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+              {sellers.map((s) => (
+                <div
+                  key={s.storeSlug}
+                  className="bg-white rounded-[18px] border border-black/[0.07] overflow-hidden flex flex-col hover:-translate-y-1 hover:shadow-[0_14px_34px_rgba(0,0,0,0.1)] transition-all duration-300"
+                >
+                  <div className="h-24 bg-[#0D0D0D] relative">
+                    {s.bannerUrl && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={s.bannerUrl} alt="" className="w-full h-full object-cover opacity-80" />
+                    )}
+                  </div>
+                  <div className="px-5 pb-5 flex flex-col flex-1">
+                    <div className="flex items-end gap-3 -mt-7 mb-3">
+                      <div className="w-14 h-14 rounded-full border-2 border-white overflow-hidden bg-[#F5F0E8] flex-shrink-0">
+                        {s.logoUrl ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={s.logoUrl} alt={`${s.storeName} logo`} className="w-full h-full object-cover" />
+                        ) : (
+                          <span className="w-full h-full flex items-center justify-center font-extrabold text-[#E8622A]" style={{ fontFamily: 'var(--font-display)' }}>
+                            {s.storeName.slice(0, 1)}
+                          </span>
+                        )}
+                      </div>
+                      {s.isVerified && (
+                        <span className="mb-1.5 inline-flex items-center gap-1 text-[0.62rem] font-semibold tracking-wide uppercase text-[#2A5C45] bg-[#2A5C45]/10 rounded-full px-2 py-0.5">
+                          ✓ Verified
+                        </span>
+                      )}
+                    </div>
+                    <h3
+                      className="font-extrabold text-[1.02rem] text-[#0D0D0D] leading-tight mb-1"
+                      style={{ fontFamily: 'var(--font-display)' }}
+                    >
+                      {s.storeName}
+                    </h3>
+                    {s.location && <p className="text-[0.72rem] text-black/40 mb-2">{s.location}</p>}
+                    {s.description && (
+                      <p className="text-[0.8rem] text-black/50 leading-relaxed line-clamp-2 mb-3">{s.description}</p>
+                    )}
+                    <div className="mt-auto">
+                      <div className="flex items-center gap-3 text-[0.72rem] text-black/45 mb-3">
+                        <span>
+                          <strong className="text-[#0D0D0D]">{s.productCount}</strong>{' '}
+                          {s.productCount === 1 ? 'product' : 'products'}
+                        </span>
+                        {s.avgRating != null && s.avgRating > 0 && (
+                          <span>
+                            <strong className="text-[#0D0D0D]">{s.avgRating}★</strong> rated
+                          </span>
+                        )}
+                      </div>
+                      {s.previewProducts.length > 0 && (
+                        <div className="flex gap-2 mb-4">
+                          {s.previewProducts.slice(0, 3).map((p) => (
+                            <Link
+                              key={p.id}
+                              href={`/products/${p.slug}`}
+                              className="w-16 h-16 rounded-[10px] overflow-hidden bg-[#F5F0E8] border border-black/[0.05] hover:opacity-80 transition-opacity"
+                              aria-label={p.name}
+                            >
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img src={p.images[0]} alt={p.name} className="w-full h-full object-cover" />
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+                      <Link
+                        href={`/store/${s.storeSlug}`}
+                        className="inline-block px-5 py-2 rounded-full bg-[#0D0D0D] text-white text-[0.78rem] font-medium hover:bg-[#E8622A] transition-colors"
+                      >
+                        Visit Shop →
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
