@@ -121,7 +121,7 @@ export function Footer() {
             © {new Date().getFullYear()} KOVA Inc. All rights reserved.
           </p>
           <p className="text-[0.7rem] text-[#F5F0E8]/22 text-center sm:text-right">
-            Built with ♥ for creators, makers, and sellers everywhere.
+            Built for creators, makers, and sellers everywhere.
           </p>
         </div>
       </div>

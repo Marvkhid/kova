@@ -40,7 +40,10 @@ function EmptyPanel({ onClose }: { onClose: () => void }) {
  
   return (
     <div className="flex flex-col items-center justify-center flex-1 py-16 text-center px-6">
-      <div className="text-5xl mb-4">🛒</div>
+      <div className="w-20 h-20 rounded-full overflow-hidden mb-4" aria-hidden="true">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/images/seed/photo/furniture/furniture-p09.jpg" alt="" className="w-full h-full object-cover" loading="lazy" />
+      </div>
       <h3
         className="font-bold text-[1.1rem] text-[#0D0D0D] mb-2"
         style={{ fontFamily: 'var(--font-display)' }}
@@ -70,16 +73,28 @@ function PanelCartItem({ item }: { item: CartItem }) {
   return (
     <div className="flex gap-3 py-4 border-b border-black/[0.06] last:border-0">
       <div className="w-16 h-16 rounded-[10px] overflow-hidden bg-[#EDE8DF] flex-shrink-0">
-        <img
-          src={`/images/${product.imagePlaceholder}.jpg`}
-          alt={product.name}
-          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-        />
+        {product.images?.[0] ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={product.images[0]}
+            alt={product.name}
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            loading="lazy"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-black/25" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <rect x="3" y="3" width="18" height="18" rx="2" />
+              <circle cx="8.5" cy="8.5" r="1.5" />
+              <path d="m21 15-5-5L5 21" />
+            </svg>
+          </div>
+        )}
       </div>
  
       <div className="flex-1 min-w-0">
-        <p className="text-[0.68rem] text-[#E8622A] uppercase tracking-[0.06em] font-medium">
-          {product.seller}
+        <p className="text-[0.68rem] text-[#E8622A] uppercase tracking-[0.06em] font-medium truncate">
+          {product.seller?.sellerProfile?.storeName ?? product.seller?.name ?? 'KOVA Seller'}
         </p>
         <p
           className="font-semibold text-[0.85rem] text-[#0D0D0D] leading-snug truncate mt-0.5"
@@ -135,9 +150,6 @@ function CartPanel({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }
   const router = useRouter();
   const { items, total, itemCount, clearCart } = useCart();
   const { addToast } = useToast();
- 
-  const shipping   = total >= 50 ? 0 : 4.99;
-  const grandTotal = total + shipping;
  
   function handleCheckout() {
     onClose();
@@ -217,17 +229,6 @@ function CartPanel({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }
                 <span className="text-black/50">Subtotal</span>
                 <span className="font-medium text-[#0D0D0D]">{formatPrice(total)}</span>
               </div>
-              <div className="flex justify-between text-[0.85rem]">
-                <span className="text-black/50">Shipping</span>
-                <span className={`font-medium ${shipping === 0 ? 'text-[#2A5C45]' : 'text-[#0D0D0D]'}`}>
-                  {shipping === 0 ? 'Free' : formatPrice(shipping)}
-                </span>
-              </div>
-              {shipping > 0 && (
-                <p className="text-[0.7rem] text-black/35">
-                  Add {formatPrice(50 - total)} more for free shipping
-                </p>
-              )}
             </div>
  
             <div className="flex justify-between items-baseline mb-5 pt-3 border-t border-black/[0.07]">
@@ -236,7 +237,7 @@ function CartPanel({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }
                 className="font-extrabold text-[1.3rem] text-[#0D0D0D]"
                 style={{ fontFamily: 'var(--font-display)' }}
               >
-                {formatPrice(grandTotal)}
+                {formatPrice(total)}
               </span>
             </div>
  
@@ -255,8 +256,8 @@ function CartPanel({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }
               </button>
             </div>
  
-            <p className="text-center text-[0.7rem] text-black/30 mt-3 flex items-center justify-center gap-1">
-              <span>🔒</span> Secure checkout · Buyer protection
+            <p className="text-center text-[0.7rem] text-black/30 mt-3">
+              Checkout closes when payments are integrated
             </p>
           </div>
         )}

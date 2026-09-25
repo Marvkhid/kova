@@ -2,14 +2,16 @@
 // KOVA — Utility Functions
 // ============================================================
 
-/** Format a number as USD currency string */
+/**
+ * Format a number as Nigerian Naira. Kovo marketplace prices are
+ * whole-Naira; kobo are shown only when present (₦12,500 · ₦12,500.50).
+ */
 export function formatPrice(amount: number): string {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 0,
+  const hasKobo = Math.round(amount * 100) % 100 !== 0;
+  return `₦${new Intl.NumberFormat('en-NG', {
+    minimumFractionDigits: hasKobo ? 2 : 0,
     maximumFractionDigits: 2,
-  }).format(amount);
+  }).format(amount)}`;
 }
 
 /** Generate a unique ID for toasts / transient items */

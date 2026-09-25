@@ -1,33 +1,34 @@
 // ============================================================
 // KOVA — /sellers
-// Seller landing: hero, perks, how-to-start, FAQ, CTA.
+// Seller landing: what you get, how it works, FAQ, CTA.
+// Honest copy — no invented seller counts or payout figures.
 // ============================================================
 
 import Link from 'next/link';
 import { SectionLabel } from '../ui/Atom';
 
 const PERKS = [
-  { icon: '🌍', title: 'Global reach', desc: 'List once and instantly reach buyers across 190+ countries with zero extra effort.' },
-  { icon: '💸', title: 'Instant payouts', desc: 'Get paid fast. Withdraw to your bank, mobile money, or preferred payment method.' },
-  { icon: '📊', title: 'Seller analytics', desc: 'See who\'s viewing your listings, what\'s converting, and where your buyers are from.' },
-  { icon: '🛡️', title: 'Built-in trust', desc: 'Verified seller badges, rating system, and dispute resolution — all handled for you.' },
-  { icon: '⚡', title: 'List in minutes', desc: 'Simple product upload. Add images, set your price, write a description — done.' },
-  { icon: '🎯', title: 'Low fees', desc: 'We only earn when you earn. Transparent fee structure, no hidden charges.' },
+  { photo: '/images/seed/photo/furniture/furniture-p04.jpg', title: 'Physical or digital', desc: 'Sell handmade goods and shipped products, or courses, templates, ebooks and designs. The listing flow adapts to what you are selling.' },
+  { photo: '/images/seed/photo/digital-products/digital-products-p03.jpg', title: 'Your own product page', desc: 'Every published listing gets a permanent public link and a QR code — perfect for WhatsApp, Instagram, flyers and packaging.' },
+  { photo: '/images/seed/photo/interior-home/interior-home-p04.jpg', title: 'Honest analytics', desc: 'See total views, listing status and store activity in your dashboard. Real numbers only — when there is nothing to show, we say so.' },
+  { photo: '/images/seed/photo/fashion/fashion-p04.jpg', title: 'Simple store management', desc: 'Publish, unpublish, edit or delete listings at any time. Drafts stay private until you are ready.' },
+  { photo: '/images/seed/photo/electronics/electronics-p04.jpg', title: 'List in minutes', desc: 'Guided image slots for physical products, a rich description flow for digital ones. No complicated setup.' },
+  { photo: '/images/seed/photo/beauty/beauty-p04.jpg', title: 'One account for everything', desc: 'Your browsing account becomes your selling account. No separate logins, no duplicate profiles.' },
 ];
 
 const STEPS = [
-  { n: '01', title: 'Create your seller account', desc: 'Sign up free. Your buyer account doubles as your seller account — no separate login needed.' },
-  { n: '02', title: 'Set up your seller profile', desc: 'Add your store name, bio, and profile image. First impressions matter — make yours count.' },
-  { n: '03', title: 'Upload your first product', desc: 'Add photos, write your description, set your price. Physical, digital, or service — all supported.' },
-  { n: '04', title: 'Start earning', desc: 'Your listing goes live instantly. Share it or let KOVA\'s discovery engine bring buyers to you.' },
+  { n: '01', title: 'Sign in', desc: 'Use Google or your existing account. Your buyer account doubles as your seller account — no separate login needed.' },
+  { n: '02', title: 'Set up your store', desc: 'Add your store name and a short description. Takes under a minute.' },
+  { n: '03', title: 'List your products', desc: 'Physical products need at least 3 photos (front, back, side). Digital products get their own flow.' },
+  { n: '04', title: 'Publish and share', desc: 'Your listing goes live with a stable URL and QR code. Share it anywhere — the link keeps working.' },
 ];
 
 const FAQS = [
-  { q: 'Is it free to list on KOVA?', a: 'Yes. Creating a seller account and listing products is completely free. We charge a small transaction fee only when you make a sale.' },
-  { q: 'What can I sell on KOVA?', a: 'Physical goods, digital products (templates, courses, designs, music), and services (freelance work, consulting, coaching). If it has value, you can sell it.' },
-  { q: 'How do I get paid?', a: 'Once an order is confirmed, funds are released to your KOVA wallet. You can withdraw to your bank account, mobile money, or supported payment platforms at any time.' },
-  { q: 'Can I sell from Nigeria or other African countries?', a: 'Absolutely. KOVA is built with global sellers in mind — including African creators, makers, and entrepreneurs. We support local payout methods.' },
-  { q: 'How do I handle shipping for physical products?', a: 'You set your own shipping terms. KOVA provides tools to define shipping zones, rates, and delivery estimates. We also integrate with major courier services.' },
+  { q: 'Is it free to list on KOVA?', a: 'Yes. Creating a seller account and listing products is free.' },
+  { q: 'What can I sell on KOVA?', a: 'Physical goods (fashion, crafts, electronics, anything shippable) and digital products (courses, templates, ebooks, designs, software). You pick the product type when listing — the form adapts.' },
+  { q: 'How do buyers find my products?', a: 'Published listings appear automatically in New Arrivals, search, and their category. You also get a shareable link and QR code for every product, so you can bring your own audience.' },
+  { q: 'Do I need a separate seller account?', a: 'No. One Kova account does both. Activate a store from the same login you browse with.' },
+  { q: 'How do buyers pay me?', a: 'Payments are handled at checkout through the platform. Your dashboard shows real sales once orders come in — nothing is simulated.' },
 ];
 
 function FaqItem({ q, a }: { q: string; a: string }) {
@@ -57,77 +58,49 @@ export default function SellersPage() {
           style={{ background: '#E8622A', top: -150, right: -100 }}
         />
 
-        <div className="max-w-[1280px] mx-auto px-4 sm:px-5 md:px-8 grid md:grid-cols-2 gap-8 sm:gap-10 items-center relative z-10">
-          <div>
-            <SectionLabel light>Sell on KOVA</SectionLabel>
-            <h1
-              className="font-extrabold text-[#F5F0E8] leading-[0.97] tracking-[-0.03em] mb-5 sm:mb-6"
-              style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(2rem, 10vw, 4.5rem)' }}
-            >
-              Your products.
-              <br />
-              The world&apos;s
-              <br />
-              <span className="text-[#E8622A] italic">marketplace.</span>
-            </h1>
-            <p className="text-[0.92rem] sm:text-[1rem] text-[#F5F0E8]/55 leading-[1.8] mb-7 sm:mb-8 max-w-[460px]">
-              Join 48,000+ sellers already growing their business on KOVA. List for free, reach global buyers, and get paid fast.
-            </p>
-            <div className="flex flex-col xs:flex-row flex-wrap gap-3">
-              <Link href="#start" className="px-7 py-[0.9rem] rounded-full bg-[#E8622A] text-white font-medium hover:-translate-y-[2px] hover:shadow-[0_8px_28px_rgba(232,98,42,0.35)] transition-all duration-250 text-center">
-                Start selling free
-              </Link>
-              <Link href="#faq" className="px-7 py-[0.9rem] rounded-full border border-[#F5F0E8]/20 text-[#F5F0E8] font-medium hover:border-[#F5F0E8]/45 hover:bg-[#F5F0E8]/[0.05] transition-all duration-200 text-center">
-                See how it works
-              </Link>
-            </div>
-          </div>
-
-          <div className="relative h-[280px] sm:h-[380px] rounded-[18px] sm:rounded-[24px] overflow-hidden">
-            <img
-              src="/images/sellers-hero.jpg"
-              alt="Seller dashboard"
-              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
-            />
-            <div className="absolute inset-0 bg-gradient-to-br from-[#E8622A]/10 to-transparent pointer-events-none" />
+        <div className="max-w-[1280px] mx-auto px-4 sm:px-5 md:px-8 relative z-10">
+          <SectionLabel light>Sell on KOVA</SectionLabel>
+          <h1
+            className="font-extrabold text-[#F5F0E8] leading-[0.97] tracking-[-0.03em] mb-5 sm:mb-6 max-w-[720px]"
+            style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(2rem, 10vw, 4.5rem)' }}
+          >
+            Your products.
+            <br />
+            Your store.
+            <br />
+            <span className="text-[#E8622A] italic">One link.</span>
+          </h1>
+          <p className="text-[0.92rem] sm:text-[1rem] text-[#F5F0E8]/55 leading-[1.8] mb-7 sm:mb-8 max-w-[500px]">
+            Turn what you make into what you sell. List physical or digital products in minutes, publish when
+            you are ready, and share each listing with its own permanent link and QR code.
+          </p>
+          <div className="flex flex-col xs:flex-row flex-wrap gap-3">
+            <Link href="/sell" className="px-7 py-[0.9rem] rounded-full bg-[#E8622A] text-white font-medium hover:-translate-y-[2px] hover:shadow-[0_8px_28px_rgba(232,98,42,0.35)] transition-all duration-200 text-center">
+              Start selling free
+            </Link>
+            <Link href="#faq" className="px-7 py-[0.9rem] rounded-full border border-[#F5F0E8]/20 text-[#F5F0E8] font-medium hover:border-[#F5F0E8]/45 hover:bg-[#F5F0E8]/[0.05] transition-all duration-200 text-center">
+              See how it works
+            </Link>
           </div>
         </div>
       </section>
-
-      {/* Stats bar */}
-      <div className="bg-[#E8622A] py-5 sm:py-6">
-        <div className="max-w-[1280px] mx-auto px-4 sm:px-5 md:px-8 grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 text-center">
-          {[
-            { n: '48K+', l: 'Active sellers' },
-            { n: '190+', l: 'Countries' },
-            { n: '$2.1M', l: 'Paid out' },
-            { n: 'Free', l: 'To get started' },
-          ].map((s) => (
-            <div key={s.n}>
-              <p className="font-extrabold text-white text-[1.45rem] sm:text-[1.8rem] leading-none" style={{ fontFamily: 'var(--font-display)' }}>
-                {s.n}
-              </p>
-              <p className="text-white/70 text-[0.74rem] sm:text-[0.8rem] mt-1">{s.l}</p>
-            </div>
-          ))}
-        </div>
-      </div>
 
       {/* Perks */}
       <section className="py-14 sm:py-20 md:py-28">
         <div className="max-w-[1280px] mx-auto px-4 sm:px-5 md:px-8">
           <div className="text-center max-w-[520px] mx-auto mb-10 sm:mb-14">
-            <SectionLabel>Why sellers choose KOVA</SectionLabel>
+            <SectionLabel>Why sell on KOVA</SectionLabel>
             <h2 className="font-extrabold text-[#0D0D0D] leading-[1.05] tracking-[-0.02em]" style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.55rem, 6vw, 2.8rem)' }}>
-              Everything you need to grow
+              Built for sellers
             </h2>
           </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-4">
             {PERKS.map((perk) => (
               <div key={perk.title} className="bg-white rounded-[16px] sm:rounded-[18px] p-5 sm:p-6 border border-black/[0.07] hover:-translate-y-1 hover:shadow-lg transition-all duration-300">
-                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-[#E8622A]/[0.1] flex items-center justify-center text-lg sm:text-xl mb-4">
-                  {perk.icon}
+                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full overflow-hidden bg-[#E8622A]/[0.1] flex-shrink-0 mb-4" aria-hidden="true">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={perk.photo} alt="" className="w-full h-full object-cover" loading="lazy" />
                 </div>
                 <h3 className="font-bold text-[0.95rem] sm:text-[1rem] text-[#0D0D0D] mb-2" style={{ fontFamily: 'var(--font-display)' }}>
                   {perk.title}
@@ -169,8 +142,8 @@ export default function SellersPage() {
           </div>
 
           <div className="mt-10 sm:mt-12 text-center">
-            <Link href="/shopping" className="inline-block px-9 py-[1rem] rounded-full bg-[#E8622A] text-white font-medium text-[1rem] hover:-translate-y-[2px] hover:shadow-[0_8px_28px_rgba(232,98,42,0.35)] transition-all duration-250">
-              Create your seller account →
+            <Link href="/sell" className="inline-block px-9 py-[1rem] rounded-full bg-[#E8622A] text-white font-medium text-[1rem] hover:-translate-y-[2px] hover:shadow-[0_8px_28px_rgba(232,98,42,0.35)] transition-all duration-200">
+              Open your store →
             </Link>
           </div>
         </div>
@@ -203,10 +176,10 @@ export default function SellersPage() {
             <h2 className="relative font-extrabold text-white leading-[1.05] tracking-[-0.02em] mb-3" style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.5rem, 7vw, 3rem)' }}>
               Ready to start selling?
             </h2>
-            <p className="relative text-white/72 mb-7 sm:mb-8 max-w-[440px] mx-auto text-[0.9rem] sm:text-base">
-              Join thousands of sellers already earning on KOVA. Free to start, no credit card needed.
+            <p className="relative text-white/75 mb-7 sm:mb-8 max-w-[440px] mx-auto text-[0.9rem] sm:text-base">
+              Free to start. Your first listing can be live in minutes.
             </p>
-            <Link href="#start" className="relative inline-block px-9 py-[0.9rem] rounded-full bg-white text-[#E8622A] font-medium hover:scale-[1.03] hover:shadow-md transition-all duration-200">
+            <Link href="/sell" className="relative inline-block px-9 py-[0.9rem] rounded-full bg-white text-[#E8622A] font-medium hover:scale-[1.03] hover:shadow-md transition-all duration-200">
               Get started free
             </Link>
           </div>

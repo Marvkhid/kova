@@ -1,14 +1,23 @@
 'use client';
 
 import Link from 'next/link';
+import { useState } from 'react';
 import { useCart } from '@/features/cart/CartContext';
+import { productPhoto } from '@/lib/photo-fallback';
+import { useToast } from '@/app/Component/ToastContext';
 import { formatPrice } from '@/lib/utils';
 
 export default function CartPage() {
   const { items, total, updateQuantity, removeItem, clearCart } = useCart();
+  const { addToast } = useToast();
+  const [checkoutNotice, setCheckoutNotice] = useState(false);
 
-  const shipping = total >= 50 ? 0 : 4.99;
-  const grandTotal = total + shipping;
+  // Payments are not integrated yet — no shipping model exists, so no
+  // fee is calculated or displayed. Checkout is explicitly unavailable.
+  function handleCheckout() {
+    setCheckoutNotice(true);
+    addToast('Checkout is not available yet — online payments are coming soon.', 'error');
+  }
 
   return (
     <div className="min-h-screen bg-[#F5F0E8] px-4 sm:px-6 py-8">
@@ -33,11 +42,25 @@ export default function CartPage() {
             <div className="bg-white rounded-[16px] sm:rounded-[20px] border border-black/[0.08] divide-y divide-black/[0.06]">
               {items.map(({ product, quantity }) => (
                 <div key={product.id} className="p-4 sm:p-5 flex items-center gap-3 sm:gap-4">
-                  <img
-                    src={`/images/${product.imagePlaceholder}.jpg`}
-                    alt={product.name}
-                    className="w-14 h-14 sm:w-16 sm:h-16 rounded-[10px] object-cover bg-[#EDE8DF] flex-shrink-0"
-                  />
+                  <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-[10px] overflow-hidden bg-[#EDE8DF] flex-shrink-0">
+                    {product.images?.[0] ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={product.images[0]}
+                        alt={product.name}
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                      />
+                    ) : (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={productPhoto({ categorySlug: product.category?.slug, name: product.name })}
+                        alt=""
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                      />
+                    )}
+                  </div>
 
                   <div className="flex-1 min-w-0">
                     <p className="font-semibold text-[0.88rem] sm:text-[0.94rem] text-[#0D0D0D] truncate">
@@ -90,24 +113,24 @@ export default function CartPage() {
                   <span className="text-black/55">Subtotal</span>
                   <span className="font-medium">{formatPrice(total)}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-black/55">Shipping</span>
-                  <span className={`font-medium ${shipping === 0 ? 'text-[#2A5C45]' : ''}`}>
-                    {shipping === 0 ? 'Free' : formatPrice(shipping)}
-                  </span>
-                </div>
                 <div className="flex justify-between font-bold pt-2 border-t border-black/[0.08]">
                   <span>Total</span>
-                  <span>{formatPrice(grandTotal)}</span>
+                  <span>{formatPrice(total)}</span>
                 </div>
               </div>
 
               <button
                 type="button"
+                onClick={handleCheckout}
                 className="w-full mt-4 py-2.5 rounded-full bg-[#E8622A] text-white text-sm font-medium hover:bg-[#F07A48] transition-colors"
               >
                 Checkout
               </button>
+              {checkoutNotice && (
+                <p className="mt-2 text-[0.78rem] text-black/55 text-center">
+                  Online payments are not integrated yet — nothing has been charged.
+                </p>
+              )}
 
               <button
                 type="button"

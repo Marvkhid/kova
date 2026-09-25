@@ -1,216 +1,254 @@
 'use client';
 // ============================================================
 // KOVA — /orders
-// Order tracking page with timeline and status.
+// Real order history backed by GET /orders. The tracking
+// timeline renders ONLY from OrderEvent rows (the append-only
+// backend timeline) — nothing is animated or inferred
+// client-side, per the marketplace spec.
 // ============================================================
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useAuth } from '@clerk/nextjs';
+import { api, ApiError } from '@/lib/api';
 import { formatPrice } from '@/lib/utils';
-import { PRODUCTS } from '../../lib/types/data/products';
+import { useToast } from '../Component/ToastContext';
+import type { Order, OrderStatus } from '@/lib/types';
 
-// Static order data — replace with real API later
-const ORDERS = [
-  {
-    id: 'ORD-2091',
-    date: 'May 3, 2026',
-    status: 'delivered',
-    items: [
-      { product: PRODUCTS[0], quantity: 1 },
-      { product: PRODUCTS[3], quantity: 2 },
-    ],
-    total: 48,
-    tracking: 'KV-TRK-8821-NGR',
-    timeline: [
-      { label: 'Order placed', done: true, date: 'May 1, 9:02am' },
-      { label: 'Payment confirmed', done: true, date: 'May 1, 9:03am' },
-      { label: 'Processing', done: true, date: 'May 1, 2:15pm' },
-      { label: 'Shipped', done: true, date: 'May 2, 10:30am' },
-      { label: 'Delivered', done: true, date: 'May 3, 1:45pm' },
-    ],
-  },
-  {
-    id: 'ORD-2088',
-    date: 'Apr 28, 2026',
-    status: 'shipped',
-    items: [{ product: PRODUCTS[1], quantity: 1 }],
-    total: 19,
-    tracking: 'KV-TRK-8817-NGR',
-    timeline: [
-      { label: 'Order placed', done: true, date: 'Apr 28, 3:10pm' },
-      { label: 'Payment confirmed', done: true, date: 'Apr 28, 3:11pm' },
-      { label: 'Processing', done: true, date: 'Apr 28, 6:00pm' },
-      { label: 'Shipped', done: true, date: 'Apr 29, 9:00am' },
-      { label: 'Delivered', done: false, date: 'Expected May 5' },
-    ],
-  },
-  {
-    id: 'ORD-2074',
-    date: 'Apr 14, 2026',
-    status: 'delivered',
-    items: [{ product: PRODUCTS[4], quantity: 1 }],
-    total: 29,
-    tracking: 'KV-TRK-8803-NGR',
-    timeline: [
-      { label: 'Order placed', done: true, date: 'Apr 14, 11:22am' },
-      { label: 'Payment confirmed', done: true, date: 'Apr 14, 11:23am' },
-      { label: 'Processing', done: true, date: 'Apr 14, 3:00pm' },
-      { label: 'Shipped', done: true, date: 'Apr 15, 8:45am' },
-      { label: 'Delivered', done: true, date: 'Apr 16, 2:10pm' },
-    ],
-  },
+const DATE_FMT = new Intl.DateTimeFormat('en-NG', { day: 'numeric', month: 'short', year: 'numeric' });
+
+// Physical lifecycle in canonical order — used to render the
+// timeline skeleton; actual completion comes from real events.
+const PHYSICAL_STEPS: { status: OrderStatus; label: string }[] = [
+  { status: 'PENDING', label: 'Order placed' },
+  { status: 'PAID', label: 'Payment confirmed' },
+  { status: 'PROCESSING', label: 'Seller processing' },
+  { status: 'PACKED', label: 'Package packed' },
+  { status: 'SHIPPED', label: 'Shipped' },
+  { status: 'IN_TRANSIT', label: 'In transit' },
+  { status: 'OUT_FOR_DELIVERY', label: 'Out for delivery' },
+  { status: 'DELIVERED', label: 'Delivered' },
 ];
 
-const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
-  delivered: { label: 'Delivered', color: '#2A5C45', bg: 'rgba(42,92,69,0.08)' },
-  shipped: { label: 'Shipped', color: '#3B2F6E', bg: 'rgba(59,47,110,0.08)' },
-  processing: { label: 'Processing', color: '#D4A843', bg: 'rgba(212,168,67,0.10)' },
-  pending: { label: 'Pending', color: '#7A746C', bg: 'rgba(122,116,108,0.10)' },
+const STATUS_STYLES: Record<string, string> = {
+  PENDING: 'bg-black/[0.05] text-black/50',
+  PAID: 'bg-[#2A5C45]/[0.08] text-[#2A5C45]',
+  PROCESSING: 'bg-[#D4A843]/[0.12] text-[#A07820]',
+  PACKED: 'bg-[#D4A843]/[0.12] text-[#A07820]',
+  SHIPPED: 'bg-[#3B2F6E]/[0.08] text-[#3B2F6E]',
+  IN_TRANSIT: 'bg-[#3B2F6E]/[0.08] text-[#3B2F6E]',
+  OUT_FOR_DELIVERY: 'bg-[#E8622A]/[0.1] text-[#C24B18]',
+  DELIVERED: 'bg-[#2A5C45]/[0.08] text-[#2A5C45]',
+  CANCELLED: 'bg-[#B3261E]/[0.08] text-[#B3261E]',
+  REFUNDED: 'bg-[#B3261E]/[0.08] text-[#B3261E]',
 };
 
-function OrderCard({ order }: { order: (typeof ORDERS)[0] }) {
-  const [expanded, setExpanded] = useState(false);
-  const status = STATUS_CONFIG[order.status];
-  const total = order.items.reduce((s, i) => s + i.product.price * i.quantity, 0);
+function statusLabel(s: string): string {
+  return s.charAt(0) + s.slice(1).toLowerCase().replace(/_/g, ' ');
+}
+
+// ── Order timeline (from real OrderEvent rows) ────────────
+
+function TrackingTimeline({ order }: { order: Order }) {
+  const events = order.events ?? [];
+  const reached = new Set(events.map((e) => e.status));
+  const eventFor = (s: OrderStatus) => events.find((e) => e.status === s);
+  const isDigitalOnly =
+    order.items.length > 0 && order.items.every((i) => i.product?.productType === 'DIGITAL');
+  const cancelled = order.status === 'CANCELLED';
+
+  const steps = isDigitalOnly
+    ? [
+        { status: 'PENDING' as OrderStatus, label: 'Order placed' },
+        { status: 'PAID' as OrderStatus, label: 'Payment confirmed' },
+        { status: 'DELIVERED' as OrderStatus, label: 'Digital access released' },
+      ]
+    : PHYSICAL_STEPS;
+
+  if (cancelled) {
+    return (
+      <div className="rounded-[12px] bg-[#B3261E]/[0.05] border border-[#B3261E]/[0.15] p-4">
+        <p className="text-[0.8rem] font-semibold text-[#B3261E] mb-1">Order cancelled</p>
+        {events.length > 0 && (
+          <p className="text-[0.74rem] text-black/45">
+            {events[events.length - 1].message ?? 'Cancelled'} ·{' '}
+            {DATE_FMT.format(new Date(events[events.length - 1].createdAt))}
+          </p>
+        )}
+      </div>
+    );
+  }
 
   return (
-    <div className="bg-white rounded-[16px] sm:rounded-[20px] border border-black/[0.07] overflow-hidden">
-      {/* Order header */}
-      <div className="flex flex-wrap items-center justify-between gap-3 px-4 sm:px-5 py-4 border-b border-black/[0.06]">
-        <div className="flex items-center gap-3 sm:gap-4 flex-wrap">
-          <div>
-            <p className="font-bold text-[0.86rem] sm:text-[0.9rem] text-[#0D0D0D]" style={{ fontFamily: 'var(--font-display)' }}>
-              {order.id}
-            </p>
-            <p className="text-[0.7rem] sm:text-[0.72rem] text-black/40 mt-0.5">{order.date}</p>
-          </div>
-          <span
-            className="text-[0.68rem] sm:text-[0.72rem] font-semibold px-2.5 py-1 rounded-full capitalize"
-            style={{ color: status.color, background: status.bg }}
-          >
-            {status.label}
-          </span>
-        </div>
-
-        <div className="flex items-center gap-3 ml-auto">
-          <p className="font-bold text-[0.9rem] sm:text-[0.95rem] text-[#0D0D0D]" style={{ fontFamily: 'var(--font-display)' }}>
-            {formatPrice(total)}
-          </p>
-          <button
-            type="button"
-            onClick={() => setExpanded((v) => !v)}
-            className="text-[0.74rem] sm:text-[0.78rem] text-[#E8622A] font-medium hover:opacity-70 transition-opacity"
-          >
-            {expanded ? 'Hide details' : 'Track order'}
-          </button>
-        </div>
-      </div>
-
-      {/* Items preview */}
-      <div className="flex gap-3 px-4 sm:px-5 py-4 overflow-x-auto">
-        {order.items.map(({ product, quantity }) => (
-          <div key={product.id} className="flex items-center gap-3 flex-shrink-0 min-w-[220px]">
-            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-[10px] overflow-hidden bg-[#EDE8DF] flex-shrink-0">
-              <img
-                src={`/images/${product.imagePlaceholder}.jpg`}
-                alt={product.name}
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+    <ol className="relative ml-1" aria-label="Order tracking timeline">
+      {steps.map((step, idx) => {
+        const event = eventFor(step.status);
+        const done = reached.has(step.status);
+        const isLast = idx === steps.length - 1;
+        const isCurrent =
+          done && (isLast || !reached.has(steps[idx + 1]?.status));
+        return (
+          <li key={step.status} className="relative flex gap-3.5 pb-5 last:pb-0">
+            {/* Connector */}
+            {!isLast && (
+              <span
+                aria-hidden="true"
+                className={`absolute left-[7px] top-4 bottom-0 w-[2px] ${done && reached.has(steps[idx + 1]?.status) ? 'bg-[#2A5C45]' : 'bg-black/[0.08]'}`}
               />
-            </div>
-            <div className="min-w-0">
-              <p className="text-[0.78rem] sm:text-[0.82rem] font-medium text-[#0D0D0D] leading-snug truncate">
-                {product.name}
-              </p>
-              <p className="text-[0.68rem] sm:text-[0.72rem] text-black/40">
-                Qty: {quantity} · {formatPrice(product.price)}
-              </p>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Expanded timeline */}
-      {expanded && (
-        <div className="border-t border-black/[0.06] px-4 sm:px-5 py-5">
-          <p className="text-[0.72rem] sm:text-[0.75rem] font-semibold text-black/40 uppercase tracking-[0.08em] mb-4">
-            Tracking: {order.tracking}
-          </p>
-
-          <div className="relative flex flex-col gap-0">
-            {order.timeline.map((step, i) => (
-              <div key={step.label} className="flex gap-4 relative">
-                {i < order.timeline.length - 1 && (
-                  <div className="absolute left-[11px] top-[24px] bottom-0 w-[1px] bg-black/[0.08]" />
-                )}
-
-                <div
-                  className={`relative z-10 flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center mt-[2px] transition-all ${
-                    step.done ? 'bg-[#2A5C45] border-[#2A5C45]' : 'bg-white border-black/15'
-                  }`}
-                >
-                  {step.done && <span className="text-white text-[0.6rem]">✓</span>}
-                </div>
-
-                <div className="pb-5">
-                  <p className={`text-[0.82rem] sm:text-[0.85rem] font-medium ${step.done ? 'text-[#0D0D0D]' : 'text-black/35'}`}>
-                    {step.label}
-                  </p>
-                  <p className="text-[0.7rem] sm:text-[0.72rem] text-black/35 mt-0.5">{step.date}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="flex flex-wrap gap-2 mt-2">
-            {order.status === 'delivered' && (
-              <button
-                type="button"
-                className="text-[0.75rem] sm:text-[0.78rem] font-medium text-[#E8622A] border border-[#E8622A]/30 px-4 py-2 rounded-full hover:bg-[#E8622A]/[0.06] transition-colors"
-              >
-                Leave a review
-              </button>
             )}
-            <button
-              type="button"
-              className="text-[0.75rem] sm:text-[0.78rem] font-medium text-black/50 border border-black/15 px-4 py-2 rounded-full hover:border-black/30 transition-colors"
-            >
-              Get help
-            </button>
-          </div>
-        </div>
-      )}
-    </div>
+            {/* Node */}
+            <span
+              aria-hidden="true"
+              className={`relative z-10 w-4 h-4 rounded-full flex-shrink-0 mt-0.5 border-2 ${
+                done
+                  ? isCurrent
+                    ? 'bg-[#2A5C45] border-[#2A5C45] ring-4 ring-[#2A5C45]/15'
+                    : 'bg-[#2A5C45] border-[#2A5C45]'
+                  : 'bg-white border-black/[0.15]'
+              }`}
+            />
+            <div className="min-w-0 flex-1 -mt-1">
+              <p className={`text-[0.82rem] font-semibold ${done ? 'text-[#0D0D0D]' : 'text-black/30'}`}>
+                {step.label}
+                {isCurrent && <span className="ml-2 text-[0.62rem] uppercase tracking-[0.06em] text-[#2A5C45]">Current</span>}
+              </p>
+              {event && (
+                <p className="text-[0.72rem] text-black/40">
+                  {event.message && `${event.message} · `}
+                  {DATE_FMT.format(new Date(event.createdAt))}
+                </p>
+              )}
+            </div>
+          </li>
+        );
+      })}
+    </ol>
   );
 }
 
-// ── Skeleton ──────────────────────────────────────────────
+// ── Order card ────────────────────────────────────────────
 
-export function OrdersPageSkeleton() {
+function OrderCard({ order, onReviewed }: { order: Order; onReviewed: () => void }) {
+  const [expanded, setExpanded] = useState(false);
+  const physicalItems = order.items.filter((i) => i.product?.productType === 'PHYSICAL');
+
   return (
-    <div className="min-h-screen bg-[#F5F0E8]">
-      <div className="bg-[#0D0D0D] h-[140px] sm:h-[160px] animate-pulse" />
-      <div className="max-w-[900px] mx-auto px-4 sm:px-5 md:px-8 py-8 sm:py-10 flex flex-col gap-4">
-        {[1, 2, 3].map((i) => (
-          <div key={i} className="bg-white rounded-[16px] sm:rounded-[20px] p-4 sm:p-5 animate-pulse">
-            <div className="flex justify-between mb-4">
-              <div className="h-4 w-32 bg-[#EDE8DF] rounded-full" />
-              <div className="h-4 w-16 bg-[#EDE8DF] rounded-full" />
-            </div>
-            <div className="flex gap-3">
-              {[1, 2].map((j) => (
-                <div key={j} className="w-11 h-11 sm:w-12 sm:h-12 bg-[#EDE8DF] rounded-[10px]" />
+    <article className="bg-white border border-black/[0.07] rounded-[18px] overflow-hidden">
+      {/* Header row */}
+      <button
+        type="button"
+        onClick={() => setExpanded((v) => !v)}
+        aria-expanded={expanded}
+        className="w-full text-left p-5 sm:p-6 flex flex-wrap items-center gap-x-5 gap-y-2 hover:bg-black/[0.015] transition-colors"
+      >
+        <div className="min-w-[150px]">
+          <p className="text-[0.62rem] uppercase tracking-[0.08em] text-black/35">Order</p>
+          <p className="font-bold text-[0.9rem] text-[#0D0D0D]" style={{ fontFamily: 'var(--font-display)' }}>
+            {order.orderNumber}
+          </p>
+          <p className="text-[0.7rem] text-black/40">{DATE_FMT.format(new Date(order.createdAt))}</p>
+        </div>
+
+        <div className="flex-1 min-w-[140px]">
+          <p className="text-[0.62rem] uppercase tracking-[0.08em] text-black/35">Items</p>
+          <p className="text-[0.82rem] text-black/70 truncate">
+            {order.items.map((i) => `${i.quantity}× ${i.product?.name ?? 'Item'}`).join(', ')}
+          </p>
+        </div>
+
+        <div>
+          <p className="text-[0.62rem] uppercase tracking-[0.08em] text-black/35">Total</p>
+          <p className="font-bold text-[0.9rem] text-[#0D0D0D]">{formatPrice(order.total)}</p>
+        </div>
+
+        <span className={`text-[0.66rem] font-bold uppercase tracking-[0.06em] px-2.5 py-1 rounded-full ${STATUS_STYLES[order.status] ?? 'bg-black/[0.05] text-black/50'}`}>
+          {statusLabel(order.status)}
+        </span>
+
+        <span aria-hidden="true" className={`text-black/30 transition-transform ${expanded ? 'rotate-180' : ''}`}>▾</span>
+      </button>
+
+      {expanded && (
+        <div className="border-t border-black/[0.06] p-5 sm:p-6 grid md:grid-cols-[1fr_320px] gap-7">
+          {/* Items */}
+          <div>
+            <ul className="space-y-4 mb-5">
+              {order.items.map((item) => (
+                <li key={item.id} className="flex gap-3.5">
+                  <div className="w-16 h-16 rounded-[10px] overflow-hidden bg-black/[0.04] flex-shrink-0">
+                    {item.product?.images?.[0] && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={item.product.images[0]} alt="" className="w-full h-full object-cover" />
+                    )}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <Link
+                      href={`/products/${item.product?.slug}`}
+                      className="text-[0.86rem] font-semibold text-[#0D0D0D] hover:text-[#E8622A] transition-colors line-clamp-2"
+                    >
+                      {item.product?.name}
+                    </Link>
+                    <p className="text-[0.74rem] text-black/45 mt-0.5">
+                      {item.quantity} × {formatPrice(item.price)}
+                      {' · '}
+                      {item.product?.seller?.sellerProfile?.storeName ?? item.product?.seller?.name ?? 'Kova seller'}
+                    </p>
+                    <span className="inline-block mt-1.5 text-[0.62rem] font-bold uppercase tracking-[0.06em] px-2 py-0.5 rounded-full bg-black/[0.04] text-black/50">
+                      {item.product?.productType === 'DIGITAL' ? 'Digital' : 'Physical'} · {statusLabel(item.fulfillmentStatus)}
+                    </span>
+                  </div>
+                </li>
               ))}
+            </ul>
+
+            <div className="text-[0.8rem] text-black/55 space-y-1 border-t border-black/[0.06] pt-4">
+              <p className="flex justify-between"><span>Subtotal</span><span>{formatPrice(order.subtotal)}</span></p>
+              <p className="flex justify-between"><span>Shipping</span><span>{order.shipping === 0 ? '—' : formatPrice(order.shipping)}</span></p>
+              <p className="flex justify-between font-bold text-[#0D0D0D] text-[0.9rem]">
+                <span>Total</span><span>{formatPrice(order.total)}</span></p>
+              {order.shippingAddress?.city && (
+                <p className="flex justify-between text-black/40 text-[0.74rem]">
+                  <span>Delivering to</span><span>{order.shippingAddress.city}, {order.shippingAddress.state ?? 'Nigeria'}</span>
+                </p>
+              )}
             </div>
           </div>
-        ))}
-      </div>
-    </div>
+
+          {/* Tracking timeline */}
+          <div>
+            <p className="text-[0.62rem] uppercase tracking-[0.08em] text-black/35 mb-4">
+              {physicalItems.length ? 'Tracking' : 'Fulfilment'}
+            </p>
+            <TrackingTimeline order={order} />
+          </div>
+        </div>
+      )}
+    </article>
   );
 }
 
 // ── Page ──────────────────────────────────────────────────
 
 export default function OrdersPage() {
+  const { isLoaded, isSignedIn } = useAuth();
+  const { addToast } = useToast();
+  const [orders, setOrders] = useState<Order[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!isLoaded || !isSignedIn) return;
+    let alive = true;
+    api
+      .getMyOrders()
+      .then((res) => { if (alive) setOrders(res); })
+      .catch((e) => {
+        if (!alive) return;
+        setError(e instanceof ApiError ? e.message : 'Could not load your orders');
+        setOrders([]);
+      });
+    return () => { alive = false; };
+  }, [isLoaded, isSignedIn]);
+
   return (
     <div className="min-h-screen bg-[#F5F0E8]">
       {/* Header */}
@@ -228,25 +266,65 @@ export default function OrdersPage() {
         </div>
       </div>
 
-      {/* Orders list */}
       <div className="max-w-[900px] mx-auto px-4 sm:px-5 md:px-8 py-8 sm:py-10">
-        {ORDERS.length > 0 ? (
-          <div className="flex flex-col gap-4">
-            {ORDERS.map((order) => (
-              <OrderCard key={order.id} order={order} />
+        {!isLoaded ? (
+          <div className="space-y-4" aria-busy="true">
+            {[0, 1].map((i) => (
+              <div key={i} className="animate-pulse bg-white border border-black/[0.07] rounded-[18px] p-6">
+                <div className="h-4 w-48 bg-black/[0.06] rounded mb-3" />
+                <div className="h-3 w-32 bg-black/[0.05] rounded" />
+              </div>
             ))}
           </div>
-        ) : (
-          <div className="text-center py-20 sm:py-24">
-            <div className="text-5xl mb-4">📦</div>
+        ) : !isSignedIn ? (
+          <div className="bg-white rounded-[16px] sm:rounded-[20px] border border-black/[0.07] p-8 sm:p-10 text-center">
+            <h2 className="font-bold text-[1.05rem] sm:text-[1.15rem] text-[#0D0D0D] mb-2" style={{ fontFamily: 'var(--font-display)' }}>
+              Sign in to see your orders
+            </h2>
+            <p className="text-black/45 text-[0.86rem] sm:text-[0.9rem] mb-6">
+              Your order history is tied to your account.
+            </p>
+            <Link
+              href="/sign-in?redirect_url=%2Forders"
+              className="px-7 py-3 rounded-full bg-[#0D0D0D] text-[#F5F0E8] font-medium hover:bg-[#1A1A1A] transition-colors inline-block"
+            >
+              Sign in
+            </Link>
+          </div>
+        ) : error ? (
+          <div className="bg-white border border-black/[0.07] rounded-[16px] p-8 text-center">
+            <p className="text-[0.86rem] text-[#B3261E] mb-4">{error}</p>
+            <button
+              type="button"
+              onClick={() => { setError(null); setOrders(null); }}
+              className="text-[0.8rem] font-semibold text-[#E8622A] hover:underline"
+            >
+              Try again
+            </button>
+          </div>
+        ) : orders === null ? (
+          <div className="space-y-4" aria-busy="true">
+            {[0, 1, 2].map((i) => (
+              <div key={i} className="animate-pulse bg-white border border-black/[0.07] rounded-[18px] p-6">
+                <div className="h-4 w-48 bg-black/[0.06] rounded mb-3" />
+                <div className="h-3 w-32 bg-black/[0.05] rounded" />
+              </div>
+            ))}
+          </div>
+        ) : orders.length === 0 ? (
+          <div className="text-center py-16 sm:py-20">
+            <div className="w-14 h-14 rounded-full overflow-hidden mx-auto mb-5" aria-hidden="true">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/images/seed/photo/furniture/furniture-p07.jpg" alt="" className="w-full h-full object-cover" loading="lazy" />
+            </div>
             <h2
               className="font-bold text-[1.1rem] sm:text-[1.2rem] text-[#0D0D0D] mb-2"
               style={{ fontFamily: 'var(--font-display)' }}
             >
               No orders yet
             </h2>
-            <p className="text-black/45 text-[0.86rem] sm:text-[0.9rem] mb-6">
-              Start shopping to see your orders here.
+            <p className="text-black/45 text-[0.86rem] sm:text-[0.9rem] max-w-[440px] mx-auto leading-relaxed mb-6">
+              Orders appear here once checkout is completed on a purchase.
             </p>
             <Link
               href="/shopping"
@@ -254,6 +332,15 @@ export default function OrdersPage() {
             >
               Browse products
             </Link>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            <p className="text-[0.78rem] text-black/45 mb-2">
+              {orders.length} order{orders.length === 1 ? '' : 's'} · tap a row to see items and tracking
+            </p>
+            {orders.map((order) => (
+              <OrderCard key={order.id} order={order} onReviewed={() => addToast('Thanks for your feedback!')} />
+            ))}
           </div>
         )}
       </div>
