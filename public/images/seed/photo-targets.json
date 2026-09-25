@@ -1,0 +1,2007 @@
+[
+  {
+    "name": "Wireless Noise-Cancelling Headphones",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "ENC Wireless Earbuds",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "87-Key Mechanical Keyboard",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Silent-Click Wireless Mouse",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "20000mAh Power Bank (22.5W PD)",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "65W GaN Fast Charger",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "20W Bluetooth Speaker",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Fitness Smart Watch",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Smartphone Gimbal Stabilizer",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Aluminium Laptop Stand",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "7-in-1 USB-C Hub",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "18″ Ring Light with Tripod",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "1080p Streaming Webcam",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "7.1 Gaming Headset",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Bluetooth FM Transmitter",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "WiFi Smart Bulb (RGB)",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "300W Solar Generator Kit",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Ankara Print Maxi Dress",
+    "category": "fashion",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Handwoven Leather Tote",
+    "category": "fashion",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Men's Embroidered Kaftan",
+    "category": "fashion",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Adire Camp Shirt",
+    "category": "fashion",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Waxed Canvas Weekender Bag",
+    "category": "fashion",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Beaded Statement Necklace",
+    "category": "fashion",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Handmade Leather Sandals",
+    "category": "fashion",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Silk-Blend Headwrap Set (2)",
+    "category": "fashion",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Canvas Low-Top Sneakers",
+    "category": "fashion",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Minimal Leather-Strap Watch",
+    "category": "fashion",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Full-Grain Leather Belt",
+    "category": "fashion",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Polarized Sunglasses",
+    "category": "fashion",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Crossbody Sling Bag",
+    "category": "fashion",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Women's Palazzo Trousers",
+    "category": "fashion",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Eau de Parfum — Ivory Oud",
+    "category": "beauty-perfumes",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Fragrance Oil Discovery Set",
+    "category": "beauty-perfumes",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Whipped Shea Body Butter",
+    "category": "beauty-perfumes",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Traditional African Black Soap",
+    "category": "beauty-perfumes",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Rosewater Facial Mist",
+    "category": "beauty-perfumes",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Makeup Brush Set (12 pc)",
+    "category": "beauty-perfumes",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Satin-Lined Sleep Bonnet",
+    "category": "beauty-perfumes",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Beard Growth Oil",
+    "category": "beauty-perfumes",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Coffee Body Scrub",
+    "category": "beauty-perfumes",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Lip Balm Trio",
+    "category": "beauty-perfumes",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Reed Diffuser Set",
+    "category": "beauty-perfumes",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Soy Wax Candle Set",
+    "category": "beauty-perfumes",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Handwoven Wall Tapestry",
+    "category": "interior-home",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Rattan Pendant Lamp",
+    "category": "interior-home",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Arch Full-Length Mirror",
+    "category": "interior-home",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Ceramic Vase Trio",
+    "category": "interior-home",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Woven Storage Basket Set",
+    "category": "interior-home",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Beaded Placemat Set (4)",
+    "category": "interior-home",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Framed Abstract Canvas Print",
+    "category": "interior-home",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Bamboo Drawer Organisers",
+    "category": "interior-home",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Ankara Throw Pillow Covers (2)",
+    "category": "interior-home",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Brass Table Lamp with Linen Shade",
+    "category": "interior-home",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Handwoven Jute Rug",
+    "category": "interior-home",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Minimal Wood Wall Clock",
+    "category": "interior-home",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Incense Holder & Stick Set",
+    "category": "interior-home",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Rattan Lounge Chair",
+    "category": "furniture",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Solid Oak Dining Table (6-Seater)",
+    "category": "furniture",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "5-Tier Solid Wood Bookshelf",
+    "category": "furniture",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Bedside Table with Drawer",
+    "category": "furniture",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Ergonomic Mesh Office Chair",
+    "category": "furniture",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Walnut Round Coffee Table",
+    "category": "furniture",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "3-Seater Bouclé Sofa",
+    "category": "furniture",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Oak Bar Stools (Set of 2)",
+    "category": "furniture",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "2-Door Wardrobe",
+    "category": "furniture",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Writing Desk with Drawers",
+    "category": "furniture",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "TV Stand Console",
+    "category": "furniture",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Console Entryway Table",
+    "category": "furniture",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Non-Slip Yoga Mat (6 mm)",
+    "category": "health-wellness",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Resistance Bands Set",
+    "category": "health-wellness",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Adjustable Dumbbells Pair (2×10 kg)",
+    "category": "health-wellness",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Weighted Jump Rope",
+    "category": "health-wellness",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "High-Density Foam Roller",
+    "category": "health-wellness",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Time-Marker Water Bottle (1 L)",
+    "category": "health-wellness",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Glass Meal-Prep Containers (7-pack)",
+    "category": "health-wellness",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Essential Oil Diffuser",
+    "category": "health-wellness",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Acupressure Mat & Pillow Set",
+    "category": "health-wellness",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Undated Fitness Journal",
+    "category": "health-wellness",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "12-Week Home Workout Program",
+    "category": "health-wellness",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Nigerian Meal Plan & Nutrition Guide",
+    "category": "health-wellness",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Beginner’s Guide to Intermittent Fasting",
+    "category": "health-wellness",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Sleep Reset: A Practical Sleep-Hygiene Course",
+    "category": "health-wellness",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Full-Stack Web Development Bootcamp",
+    "category": "digital-education",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "UI/UX Design Fundamentals",
+    "category": "digital-education",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Excel for Business & Finance",
+    "category": "digital-education",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Digital Marketing Masterclass",
+    "category": "digital-education",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Data Analysis with Python",
+    "category": "digital-education",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Product Management Primer",
+    "category": "digital-education",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "CV & Interview Toolkit",
+    "category": "digital-education",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Financial Literacy for Nigerians",
+    "category": "digital-education",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Graphic Design with Figma",
+    "category": "digital-education",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Video Editing with Premiere Pro",
+    "category": "digital-education",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Copywriting that Converts",
+    "category": "digital-education",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "IELTS Academic Preparation Program",
+    "category": "digital-education",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Bookkeeping for Small Business",
+    "category": "digital-education",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "WhatsApp & Instagram Sales Playbook",
+    "category": "digital-education",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Notion Business OS Template",
+    "category": "digital-products",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Minimal Portfolio UI Kit (Figma)",
+    "category": "digital-products",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Product Photo Presets Pack (Lightroom)",
+    "category": "digital-products",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Invoice & Quote Template Pack",
+    "category": "digital-products",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Bank-Ready Business Plan Template",
+    "category": "digital-products",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Social Media Content Calendar (365 Days)",
+    "category": "digital-products",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Instagram Carousel Templates (90)",
+    "category": "digital-products",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Freelance Proposal Template Kit",
+    "category": "digital-products",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Study Planner (Printable PDF)",
+    "category": "digital-products",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Resume Template Bundle (12 Designs)",
+    "category": "digital-products",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Email Marketing Swipe File",
+    "category": "digital-products",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Digital Life Planner (iPad + Print)",
+    "category": "digital-products",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Small Business Legal Document Starter Pack",
+    "category": "digital-products",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Bluetooth Party Speaker",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "USB-C 7-in-1 Hub",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "15W Wireless Charging Pad",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Smart Wi-Fi Plug",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Fitness Activity Band",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Phone Gimbal Stabilizer",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "USB Condenser Microphone",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Laptop Cooling Pad",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Wireless Lavalier Microphone Set",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Smart Watch with Calling",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Magnetic Power Bank",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "HDMI 2.0 Cable",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "USB Card Reader",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Office Headset with Boom Mic",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Wi-Fi Range Extender",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Precision Stylus for Tablets",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Car Dash Camera",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Tablet Keyboard Folio Case",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "4G LTE Mobile Router",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Under-Desk Cable Management Tray",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Travel Power Strip with USB",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Bluetooth Audio Receiver for Home Stereos",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Mechanical Numpad Macro Pad",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Ankara Print Wrap Dress",
+    "category": "fashion",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Embroidered Kaftan",
+    "category": "fashion",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Men's Senator Two-Piece Set",
+    "category": "fashion",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Cord Two-Piece Set",
+    "category": "fashion",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Silk-Touch Headwrap Collection",
+    "category": "fashion",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Full-Grain Leather Slides",
+    "category": "fashion",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Structured Leather Tote",
+    "category": "fashion",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Beaded Evening Clutch",
+    "category": "fashion",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Woven Leather Belt",
+    "category": "fashion",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Statement Brass Earrings",
+    "category": "fashion",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Minimalist Alloy Watch",
+    "category": "fashion",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Polarized Acetate Sunglasses",
+    "category": "fashion",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Hand-Loomed Cotton Kaftan Top",
+    "category": "fashion",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Pleated Midi Skirt",
+    "category": "fashion",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Tailored Oxford Shirt",
+    "category": "fashion",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Slim Chino Trousers",
+    "category": "fashion",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Suede Loafers",
+    "category": "fashion",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Woven Slingback Sandals",
+    "category": "fashion",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Layered Chain Jewelry Set",
+    "category": "fashion",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Raffia Fringe Tote",
+    "category": "fashion",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Quilted Crossbody Bag",
+    "category": "fashion",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Adire-Dyed Kimono Jacket",
+    "category": "fashion",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Men's Leather Driving Gloves",
+    "category": "fashion",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Beaded Waist Chain",
+    "category": "fashion",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Ceramic Dinner Set (16-Piece)",
+    "category": "interior-home",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Seagrass Storage Baskets (Set of 3)",
+    "category": "interior-home",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Arched Wall Mirror",
+    "category": "interior-home",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Ceramic Table Lamp with Linen Shade",
+    "category": "interior-home",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Textured Throw Pillow Covers (Set of 2)",
+    "category": "interior-home",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Washable Area Rug",
+    "category": "interior-home",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Blackout Curtains (Pair)",
+    "category": "interior-home",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Percale Bedding Set",
+    "category": "interior-home",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Framed Abstract Print Set",
+    "category": "interior-home",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Stoneware Vase Trio",
+    "category": "interior-home",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Ladder Bookshelf",
+    "category": "furniture",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Coffee Table with Storage",
+    "category": "furniture",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Upholstered Dining Chair (Set of 2)",
+    "category": "furniture",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Wardrobe Organizer Set",
+    "category": "interior-home",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Airtight Kitchen Canister Set",
+    "category": "interior-home",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Upholstered Bar Stool",
+    "category": "furniture",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Tripod Floor Lamp",
+    "category": "interior-home",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Silent Wall Clock",
+    "category": "interior-home",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Under-Sink Organizer Rack",
+    "category": "interior-home",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Woven Pendant Light Shade",
+    "category": "interior-home",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Non-Slip Yoga Mat",
+    "category": "health-wellness",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Neoprene Dumbbell Pair",
+    "category": "health-wellness",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Textured Foam Roller",
+    "category": "health-wellness",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Insulated Stainless Bottle",
+    "category": "health-wellness",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Herbal Tea Sampler Tin",
+    "category": "health-wellness",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Percussion Massage Gun",
+    "category": "health-wellness",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Ultrasonic Aroma Diffuser",
+    "category": "health-wellness",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Pilates Ring & Ball Kit",
+    "category": "health-wellness",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Shea Body Butter",
+    "category": "beauty-perfumes",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Roll-On Fragrance Oil",
+    "category": "beauty-perfumes",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Beard Conditioning Oil",
+    "category": "beauty-perfumes",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Sugar Body Scrub",
+    "category": "beauty-perfumes",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Hair & Scalp Oil Blend",
+    "category": "beauty-perfumes",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Facial Steamer",
+    "category": "beauty-perfumes",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Vegan Makeup Brush Set",
+    "category": "beauty-perfumes",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Eau de Parfum (50 ml)",
+    "category": "beauty-perfumes",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Manicure & Pedicure Kit",
+    "category": "beauty-perfumes",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Cork Massage Ball Pair",
+    "category": "health-wellness",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Collapsible Foam Roller (Travel)",
+    "category": "health-wellness",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Excel From Zero to Dashboards",
+    "category": "digital-education",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Data Analysis with Python Bootcamp",
+    "category": "digital-education",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Canva for Small Business",
+    "category": "digital-education",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Digital Marketing Foundations",
+    "category": "digital-education",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Freelancing 101: Land Your First Client",
+    "category": "digital-education",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Video Editing with CapCut & Premiere",
+    "category": "digital-education",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Full-Stack Web Development Track",
+    "category": "digital-education",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Personal Finance for Nigerians",
+    "category": "digital-education",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Product Management Foundations",
+    "category": "digital-education",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Cybersecurity Essentials for Teams",
+    "category": "digital-education",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Business Plan & Pitch Deck Templates",
+    "category": "digital-products",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Social Media Content Calendar System",
+    "category": "digital-products",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Professional CV Template Pack",
+    "category": "digital-products",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Lightroom Preset Collection",
+    "category": "digital-products",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Invoice & Receipt Template Pack",
+    "category": "digital-products",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Startup Pitch Deck Bundle",
+    "category": "digital-products",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Ebook: Start Selling Online in 30 Days",
+    "category": "digital-products",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Digital Study Planner (Undated)",
+    "category": "digital-products",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Monthly Budget Spreadsheet",
+    "category": "digital-products",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Brand Guidelines Template",
+    "category": "digital-products",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Notion Second Brain OS",
+    "category": "digital-products",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Ergonomic Vertical Mouse",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Laptop Backpack with USB Port",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Wireless Carplay Adapter",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Smart LED Strip Lights (5 m)",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Solar Power Bank 26800mAh",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Digital Tyre Inflator",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Wireless Charging Car Mount",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Bluetooth Tracker Tags (4-Pack)",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Noise-Isolating Wired Earbuds",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Mesh Wi-Fi 6 System (2-Pack)",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "USB-A to USB-C Adapter Set",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Streaming Microphone Arm Stand",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Portable Bluetooth Turntable",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Anti-Theft Sling Bag",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Universal Remote Control",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Nonstick Frying Pan Trio",
+    "category": "interior-home",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Electric Kettle 1.8L",
+    "category": "interior-home",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Spice Jar Carousel (12-Jar)",
+    "category": "interior-home",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Stackable Fridge Organizer Bins",
+    "category": "interior-home",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Magnetic Spice Rack Strip",
+    "category": "interior-home",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Slow Cooker 3.5L",
+    "category": "interior-home",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Velvet Accent Chair",
+    "category": "furniture",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Wardrobe Hanging Rail Organizer",
+    "category": "interior-home",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Memory Foam Pillow (Pair)",
+    "category": "interior-home",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Scented Candle Trio",
+    "category": "interior-home",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Jute Runner Rug",
+    "category": "interior-home",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Ceramic Planter with Drainage (Set of 3)",
+    "category": "interior-home",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "LED Under-Cabinet Light Bars",
+    "category": "interior-home",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Over-Door Hook Rack",
+    "category": "interior-home",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Foam Yoga Blocks (Pair)",
+    "category": "health-wellness",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Yoga Wheel",
+    "category": "health-wellness",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Ab Roller Wheel with Knee Mat",
+    "category": "health-wellness",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Exercise Hula Hoop (Weighted)",
+    "category": "health-wellness",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Ankle & Wrist Weights (Pair)",
+    "category": "health-wellness",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Hydration Tracking Bottle 2L",
+    "category": "health-wellness",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Green Tea & Moringa Blend",
+    "category": "health-wellness",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Immunity Booster Vitamin Gummies",
+    "category": "health-wellness",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Reusable Glass Water Bottles (2-Pack)",
+    "category": "health-wellness",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Compression Foot Massager Roller",
+    "category": "health-wellness",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Posture Corrector Brace",
+    "category": "health-wellness",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Wireless TENS Unit",
+    "category": "health-wellness",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Natural Deodorant Stick",
+    "category": "beauty-perfumes",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Bath Loofah Set (3-Pack)",
+    "category": "beauty-perfumes",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Charcoal Teeth Whitening Powder",
+    "category": "beauty-perfumes",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Silk Pillowcase (Standard)",
+    "category": "beauty-perfumes",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Nail Care Kit with Dryer",
+    "category": "beauty-perfumes",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Heatless Curling Rod Kit",
+    "category": "beauty-perfumes",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Body Shaper Seamless Shorts",
+    "category": "beauty-perfumes",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Travel Steamer for Clothes",
+    "category": "beauty-perfumes",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Facebook & Instagram Ads Masterclass",
+    "category": "digital-education",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "SEO for Local Nigerian Businesses",
+    "category": "digital-education",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Google Sheets Automation Course",
+    "category": "digital-education",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "WordPress Website in a Weekend",
+    "category": "digital-education",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "WhatsApp Business Selling System",
+    "category": "digital-education",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "CV Writing Service Templates (Recruiter Edition)",
+    "category": "digital-products",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Course Creator Launch Bundle",
+    "category": "digital-products",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Invoice & Bookkeeping Starter for SMEs",
+    "category": "digital-products",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Restaurant Operations Toolkit",
+    "category": "digital-products",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Real Estate Agent Digital Kit",
+    "category": "digital-products",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Photography Editing Workflow Course",
+    "category": "digital-education",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Notion Real Estate CRM",
+    "category": "digital-products",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Kids Coding with Scratch (Parent Guide)",
+    "category": "digital-education",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Data Entry Efficiency Course",
+    "category": "digital-education",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Mini Importation Guide 2026",
+    "category": "digital-education",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Virtual Assistant Career Course",
+    "category": "digital-education",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Graphic Design with Photoshop Essentials",
+    "category": "digital-education",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Bookkeeping with QuickBooks",
+    "category": "digital-education",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Content Writing Mastery",
+    "category": "digital-education",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Microsoft Office Complete Suite Training",
+    "category": "digital-education",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Amazon KDP Self-Publishing Course",
+    "category": "digital-education",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "3D Modeling with Blender Basics",
+    "category": "digital-education",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Instagram Growth for Brands",
+    "category": "digital-education",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Customer Service Excellence Training",
+    "category": "digital-education",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Project Management with Trello & Asana",
+    "category": "digital-education",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Webinar Slide & Registration Kit",
+    "category": "digital-products",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Course Workbook & Worksheet Templates",
+    "category": "digital-products",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Church & Ministry Media Pack",
+    "category": "digital-products",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "School Administrator Toolkit",
+    "category": "digital-products",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Real Estate Flyer & Listing Templates",
+    "category": "digital-products",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Fashion Boutique Branding Kit",
+    "category": "digital-products",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Food Vendor Recipe Costing Cards",
+    "category": "digital-products",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Fitness Coach Client Program Templates",
+    "category": "digital-products",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "DJ & Event Promo Pack",
+    "category": "digital-products",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Barbing Salon Price List & Booking Templates",
+    "category": "digital-products",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Airbnb Host Welcome Book Templates",
+    "category": "digital-products",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Tutorial Centre Enrollment Kit",
+    "category": "digital-products",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Graphics Tablet (Drawing Pad)",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Conference Speakerphone",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Laptop Docking Station (Dual HDMI)",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Smart Door Lock",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Digital Photo Frame (Cloud)",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Robot Vacuum Cleaner",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Portable Monitor 15.6\" USB-C",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Smart Body Composition Scale",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Wireless Doorbell Camera",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "CCTV Security Camera System (4-Channel)",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Fast Charge Power Strip Tower",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Recliner Armchair",
+    "category": "furniture",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Dining Table Set (6-Seater)",
+    "category": "furniture",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Wardrobe with Mirror (3-Door)",
+    "category": "furniture",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Kitchen Island Trolley",
+    "category": "furniture",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Shoe Cabinet (5-Tier)",
+    "category": "furniture",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Ceramic Dinner Plates (Set of 6)",
+    "category": "interior-home",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Glass Storage Jars with Bamboo Lids (Set of 4)",
+    "category": "interior-home",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Faux Fur Throw Blanket",
+    "category": "interior-home",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "LED Vanity Strip Mirror Lights",
+    "category": "interior-home",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Bathroom Storage Ladder Shelf",
+    "category": "interior-home",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Decorative Wall Clock (Silent Sweep)",
+    "category": "interior-home",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Tabletop Water Dispenser",
+    "category": "interior-home",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Complete Home Gym Kit",
+    "category": "health-wellness",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Foldable Treadmill (Walking Pad)",
+    "category": "health-wellness",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Adjustable Dumbbell (Single)",
+    "category": "health-wellness",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Exercise Bike (Magnetic)",
+    "category": "health-wellness",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Acupressure Ring & Finger Massager",
+    "category": "health-wellness",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Neck & Shoulder Heating Pad",
+    "category": "health-wellness",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Menstrual Heat Belt (Cordless)",
+    "category": "health-wellness",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": " Portable Blender (Rechargeable)",
+    "category": "health-wellness",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Food Scale (Digital)",
+    "category": "health-wellness",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Meal Prep Container Set (Glass)",
+    "category": "health-wellness",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Hand Therapy Putty Set",
+    "category": "health-wellness",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Balance Board (Wobble)",
+    "category": "health-wellness",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "African Black Soap (Family Pack)",
+    "category": "beauty-perfumes",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Rosewater Facial Toner",
+    "category": "beauty-perfumes",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Argan Hair Serum",
+    "category": "beauty-perfumes",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Body Shimmer Oil",
+    "category": "beauty-perfumes",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Scented Body Mist Set (3×)",
+    "category": "beauty-perfumes",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Men's Skincare Starter Set",
+    "category": "beauty-perfumes",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Gift & Self-Care Hamper",
+    "category": "beauty-perfumes",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Silicone Wedding-Proof Cooking Mitts",
+    "category": "health-wellness",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Kids Learning Tablet",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Fast Wireless Car Charger Mount",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Bed Frame with Under-Storage (Queen)",
+    "category": "furniture",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Dresser with 6 Drawers",
+    "category": "furniture",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Study Table & Chair Set for Kids",
+    "category": "furniture",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Magnetic Charging Cable Trio (6-Pack)",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Bluetooth FM Transmitter with QC3.0",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Posture & Core Trainer Seat Cushion",
+    "category": "health-wellness",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Grant & NGO Proposal Writing Course",
+    "category": "digital-education",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Social Media Manager Bootcamp",
+    "category": "digital-education",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Portable Inkless Thermal Printer",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Mini LED Projector",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "24-Inch IPS Monitor 75Hz",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Monitor Light Bar",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Laptop Sleeve with Accessory Pocket",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Ethernet Cable Cat 6",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "USB Desk Fan (Quiet)",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": " Bluetooth 5.3 Audio Transmitter",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Wireless Presentation Clicker",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Magnetic Cable Clips (6-Pack)",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Phone Stand with Charging Port Cutout",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "AA/AAA Battery Charger + 8 Batteries",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Desktop CNC-Cut Cable Organizer",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Echo-Reducing Desk Microphone Arm",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "LED Ring Light with Stand",
+    "category": "electronics",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Cast Iron Skillet",
+    "category": "interior-home",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Bamboo Chopping Board Set",
+    "category": "interior-home",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Stainless Steel Mixing Bowl Set",
+    "category": "interior-home",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Ceramic Utensil Holder",
+    "category": "interior-home",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Pull-Out Pantry Baskets (2-Pack)",
+    "category": "interior-home",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Quilted Bedspread Set",
+    "category": "interior-home",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Floating Wall Shelves (Set of 3)",
+    "category": "furniture",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Accent Console Table",
+    "category": "furniture",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Ottoman Storage Pouf",
+    "category": "furniture",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Vanity Mirror with LED",
+    "category": "interior-home",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Linen Curtain Panels (Pair)",
+    "category": "interior-home",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Entryway Coat Rack",
+    "category": "furniture",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Foam Massage Ball (Spiky)",
+    "category": "health-wellness",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Hip Resistance Circle (Fabric)",
+    "category": "health-wellness",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Hand Grip Strengthener (Adjustable)",
+    "category": "health-wellness",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Protein Shaker Bottle (Insulated)",
+    "category": "health-wellness",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Digital Body Weight Scale",
+    "category": "health-wellness",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Bath Salts Recovery Blend",
+    "category": "beauty-perfumes",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Konjac Facial Sponge (2-Pack)",
+    "category": "beauty-perfumes",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Wide-Tooth Detangling Comb",
+    "category": "beauty-perfumes",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Cleansing Balm",
+    "category": "beauty-perfumes",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Bamboo Charcoal Soap (Set of 3)",
+    "category": "beauty-perfumes",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Sleep Mask & Earplug Kit",
+    "category": "health-wellness",
+    "type": "PHYSICAL"
+  },
+  {
+    "name": "Interview Preparation Cohort (Live)",
+    "category": "digital-education",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Freelance Web Developer Starter Kit",
+    "category": "digital-products",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Shopify & WooCommerce Launch Course",
+    "category": "digital-education",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Presentation Design Masterclass",
+    "category": "digital-education",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Email Marketing Playbook",
+    "category": "digital-education",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Notion Client Portal Template",
+    "category": "digital-products",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Photography Business Admin Pack",
+    "category": "digital-products",
+    "type": "DIGITAL"
+  },
+  {
+    "name": "Study Skills & Exam Technique Course",
+    "category": "digital-education",
+    "type": "DIGITAL"
+  }
+]
