@@ -14,6 +14,7 @@ import { BottomNav } from './Component/BottomNav';
 import { Footer } from './Component/Footer';
 import { ScrollRevealInit } from './Component/ScrollRevealInit';
 import { AuthBridge } from './Component/AuthBridge';
+import { LocalAuthProvider } from '@/lib/auth-provider';
 import { RouteProgress } from './Component/RouteProgress';
 import { CartPanelProvider } from '@/features/cart/cartPanel';
 import { GA_MEASUREMENT_ID } from '@/lib/analytics';
@@ -59,6 +60,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <ClerkProvider>
+      <LocalAuthProvider>
       <html lang="en" className={`${syne.variable} ${dmSans.variable}`}>
         <head>
           <link rel="icon" href="/icon.svg" type="image/svg+xml" />
@@ -85,6 +87,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {GA_MEASUREMENT_ID && <GoogleAnalytics gaId={GA_MEASUREMENT_ID} />}
         </body>
       </html>
+      </LocalAuthProvider>
     </ClerkProvider>
   );
 }

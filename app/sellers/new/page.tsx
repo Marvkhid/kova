@@ -9,7 +9,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useUser } from '@clerk/nextjs';
+import { useUser } from '@/lib/auth-provider';
 import { api, ApiError } from '@/lib/api';
 import { ProductForm } from '@/app/Component/ProductForm';
 import { SellerPageShell } from '@/app/Component/SellerPageShell';

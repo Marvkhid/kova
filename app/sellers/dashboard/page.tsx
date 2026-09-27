@@ -10,7 +10,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@clerk/nextjs';
+import { useAuth } from '@/lib/auth-provider';
 import { api, ApiError } from '@/lib/api';
 import { productPhoto } from '@/lib/photo-fallback';
 import { useToast } from '@/app/Component/ToastContext';

@@ -15,6 +15,8 @@ export function AuthBridge() {
 
   useEffect(() => {
     if (!isLoaded) return;
+    // Local (email+password) sessions own the token provider — never override.
+    if (typeof window !== 'undefined' && window.localStorage.getItem('kova_local_token')) return;
     if (isSignedIn && getToken) {
       registerAuthTokenProvider(() => getToken());
     } else {

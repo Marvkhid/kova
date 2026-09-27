@@ -7,7 +7,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { useAuth, useUser } from '@clerk/nextjs';
+import { useAuth, useUser } from '@/lib/auth-provider';
 import { api } from '@/lib/api';
 import type { Product } from '@/lib/types';
 

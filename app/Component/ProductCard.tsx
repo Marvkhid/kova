@@ -8,7 +8,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@clerk/nextjs';
+import { useAuth } from '@/lib/auth-provider';
 import { useCart } from '@/features/cart/CartContext';
 import { useWishlist } from '@/lib/hooks/useWishlist';
 import { useToast } from './ToastContext';

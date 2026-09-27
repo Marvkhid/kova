@@ -11,11 +11,12 @@ import { type InputHTMLAttributes, type ReactNode, forwardRef } from 'react';
 interface AuthInputProps extends InputHTMLAttributes<HTMLInputElement> {
   label: string;
   error?: string;
+  hint?: string;
   icon?: ReactNode;
 }
 
 export const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>(
-  ({ label, error, icon, className = '', ...props }, ref) => {
+  ({ label, error, hint, icon, className = '', ...props }, ref) => {
     return (
       <div className="flex flex-col gap-1.5 w-full">
         <label className="text-[0.78rem] sm:text-[0.8rem] font-medium text-[#0D0D0D]/70 tracking-[0.01em]">
@@ -46,6 +47,7 @@ export const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>(
         </div>
 
         {error && <p className="text-[0.72rem] sm:text-[0.75rem] text-red-500 mt-0.5">{error}</p>}
+        {!error && hint && <p className="text-[0.7rem] sm:text-[0.72rem] text-black/35 mt-0.5">{hint}</p>}
       </div>
     );
   }

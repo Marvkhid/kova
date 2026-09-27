@@ -17,12 +17,19 @@ const isPublicRoute = createRouteMatcher([
   '/services(.*)',
   '/sellers',           // seller landing page
   '/sellers/store(.*)', // legacy public store path
+  '/sellers/dashboard(.*)', // self-gating: page redirects signed-out users, API enforces authz (needed for local email+password accounts whose JWT lives in localStorage, invisible to Clerk middleware)
+  '/sellers/new(.*)',       // same self-gating pattern
+  '/sellers/edit(.*)',      // same self-gating pattern
+  '/wishlist(.*)',          // same self-gating pattern
+  '/profile(.*)',           // same self-gating pattern
+  '/orders(.*)',            // same self-gating pattern
   '/store(.*)',         // public shop pages /store/[slug]
   '/about(.*)',
   '/contact(.*)',
   '/sign-in(.*)',
   '/sign-up(.*)',
   '/login(.*)',
+  '/register(.*)',
   '/api/webhook(.*)',
 ]);
 

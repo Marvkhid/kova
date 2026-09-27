@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import { useCartPanel } from '@/features/cart/cartPanel';
 import { useCart } from '@/features/cart/CartContext';
 import { NAV_LINKS } from '@/lib/types/data/constants';
-import { useAuth, UserButton } from '@clerk/nextjs';
+import { useAuth, UserButton } from '@/lib/auth-provider';
  
 function KovaLogo() {
   return (

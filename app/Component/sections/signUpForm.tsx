@@ -1,34 +1,43 @@
 'use client';
 // ============================================================
 // KOVA — SignupForm
+// Real account creation via /api/auth/register. Sellers get
+// their own shop (unique slug) created in the same step.
 // ============================================================
 
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { AuthInput, AuthDivider, GoogleButton, AuthSubmitButton } from '../ui/authForm';
+import { useAuth } from '@/lib/auth-provider';
+import { AuthInput, AuthSubmitButton } from '../ui/authForm';
 
 interface SignupFormProps {
   onSwitchTab: () => void;
 }
 
-export function SignupForm({ onSwitchTab }: SignupFormProps) {
+export function SignupForm({ onSwitchTab: _onSwitchTab }: SignupFormProps) {
   const router = useRouter();
+  const { register } = useAuth();
 
+  const [role, setRole] = useState<'BUYER' | 'SELLER'>('BUYER');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
+  const [storeName, setStoreName] = useState('');
+  const [storeDescription, setStoreDescription] = useState('');
   const [loading, setLoading] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   function validate() {
     const e: Record<string, string> = {};
     if (!name.trim()) e.name = 'Full name is required.';
+    if (role === 'SELLER' && storeName.trim().length < 3) e.storeName = 'Shop name must be at least 3 characters.';
     if (!email.trim()) e.email = 'Email is required.';
     else if (!email.includes('@')) e.email = 'Enter a valid email address.';
     if (!password) e.password = 'Password is required.';
-    else if (password.length < 6) e.password = 'Password must be at least 6 characters.';
+    else if (password.length < 8) e.password = 'Password must be at least 8 characters.';
     if (!confirm) e.confirm = 'Please confirm your password.';
     else if (password !== confirm) e.confirm = 'Passwords do not match.';
     return e;
@@ -42,16 +51,52 @@ export function SignupForm({ onSwitchTab }: SignupFormProps) {
       return;
     }
     setErrors({});
+    setFormError(null);
     setLoading(true);
 
-    // ── Replace with real auth ──
-    await new Promise((r) => setTimeout(r, 1200));
-    setLoading(false);
-    router.push('/shopping');
+    try {
+      const user = await register({
+        name,
+        email,
+        password,
+        role,
+        storeName: role === 'SELLER' ? storeName : undefined,
+        storeDescription: role === 'SELLER' ? storeDescription : undefined,
+      });
+      if (user.role === 'SELLER') {
+        router.push('/sellers/dashboard');
+      } else {
+        router.push('/shopping');
+      }
+      router.refresh();
+    } catch (err) {
+      setFormError(err instanceof Error ? err.message : 'Could not create your account. Try again.');
+      setLoading(false);
+    }
   }
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-3.5 sm:gap-4 w-full" noValidate>
+      {/* Account type */}
+      <div className="grid grid-cols-2 gap-2" role="tablist" aria-label="Account type">
+        {(['BUYER', 'SELLER'] as const).map((r) => (
+          <button
+            key={r}
+            type="button"
+            role="tab"
+            aria-selected={role === r}
+            onClick={() => setRole(r)}
+            className={`px-4 py-2.5 rounded-[12px] text-[0.84rem] font-semibold border transition-all ${
+              role === r
+                ? 'bg-[#0D0D0D] text-[#F5F0E8] border-[#0D0D0D]'
+                : 'bg-white text-black/60 border-black/[0.09] hover:border-black/25'
+            }`}
+          >
+            {r === 'BUYER' ? 'I want to buy' : 'I want to sell'}
+          </button>
+        ))}
+      </div>
+
       <AuthInput
         label="Full name"
         type="text"
@@ -67,6 +112,25 @@ export function SignupForm({ onSwitchTab }: SignupFormProps) {
           </svg>
         }
       />
+
+      {role === 'SELLER' && (
+        <AuthInput
+          label="Shop name"
+          type="text"
+          placeholder="Amara Luxe Atelier"
+          value={storeName}
+          onChange={(e) => setStoreName(e.target.value)}
+          error={errors.storeName}
+          autoComplete="organization"
+          hint="Your shop gets its own public page at /store/your-shop-name"
+          icon={
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3 9h18l-1.5 9.5a2 2 0 0 1-2 1.5h-11a2 2 0 0 1-2-1.5L3 9z" />
+              <path d="M8 9V6a4 4 0 0 1 8 0v3" />
+            </svg>
+          }
+        />
+      )}
 
       <AuthInput
         label="Email address"
@@ -127,21 +191,24 @@ export function SignupForm({ onSwitchTab }: SignupFormProps) {
         .
       </p>
 
-      <AuthSubmitButton loading={loading}>Create my account</AuthSubmitButton>
+      {formError && (
+        <p className="text-[0.78rem] text-red-500 bg-red-50 border border-red-100 rounded-[10px] px-3 py-2">
+          {formError}
+        </p>
+      )}
 
-      <AuthDivider />
-
-      <GoogleButton label="Sign up with Google" />
+      <AuthSubmitButton loading={loading}>
+        {role === 'SELLER' ? 'Create account & open my shop' : 'Create my account'}
+      </AuthSubmitButton>
 
       <p className="text-center text-[0.82rem] sm:text-[0.85rem] text-black/50 mt-1">
         Already have an account?{' '}
-        <button
-          type="button"
-          onClick={onSwitchTab}
+        <a
+          href="/login"
           className="text-[#E8622A] font-medium hover:opacity-70 transition-opacity"
         >
           Log in
-        </button>
+        </a>
       </p>
     </form>
   );

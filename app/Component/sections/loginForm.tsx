@@ -1,25 +1,27 @@
 'use client';
 // ============================================================
 // KOVA — LoginForm
-// Email + password login with validation.
-// On success → redirects to /shopping (swap for real auth later)
+// Email + password login against the real API (/api/auth/login).
+// Buyers → /shopping, sellers → their dashboard.
 // ============================================================
 
 import { useState } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { AuthInput, AuthDivider, GoogleButton, AuthSubmitButton } from '../ui/authForm';
+import { useAuth } from '@/lib/auth-provider';
+import { AuthInput, AuthSubmitButton } from '../ui/authForm';
 
 interface LoginFormProps {
   onSwitchTab: () => void;
 }
 
-export function LoginForm({ onSwitchTab }: LoginFormProps) {
+export function LoginForm({ onSwitchTab: _onSwitchTab }: LoginFormProps) {
   const router = useRouter();
+  const { login } = useAuth();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
 
   function validate() {
@@ -39,13 +41,21 @@ export function LoginForm({ onSwitchTab }: LoginFormProps) {
       return;
     }
     setErrors({});
+    setFormError(null);
     setLoading(true);
 
-    // ── Replace this block with real auth logic ──
-    await new Promise((r) => setTimeout(r, 1000)); // simulate network
-    setLoading(false);
-    router.push('/shopping');
-    // ──────────────────────────────────────────────
+    try {
+      const user = await login(email, password);
+      if (user.role === 'SELLER' && user.sellerProfile) {
+        router.push('/sellers/dashboard');
+      } else {
+        router.push('/shopping');
+      }
+      router.refresh();
+    } catch (err) {
+      setFormError(err instanceof Error ? err.message : 'Could not sign in. Try again.');
+      setLoading(false);
+    }
   }
 
   return (
@@ -82,29 +92,22 @@ export function LoginForm({ onSwitchTab }: LoginFormProps) {
         }
       />
 
-      {/* Forgot password */}
-      <div className="flex justify-end -mt-1">
-        <Link href="/forgot-password" className="text-[0.76rem] sm:text-[0.78rem] text-[#E8622A] hover:opacity-70 transition-opacity">
-          Forgot password?
-        </Link>
-      </div>
+      {formError && (
+        <p className="text-[0.78rem] text-red-500 bg-red-50 border border-red-100 rounded-[10px] px-3 py-2">
+          {formError}
+        </p>
+      )}
 
       <AuthSubmitButton loading={loading}>Log in to KOVA</AuthSubmitButton>
 
-      <AuthDivider />
-
-      <GoogleButton label="Continue with Google" />
-
-      {/* Switch to signup */}
       <p className="text-center text-[0.82rem] sm:text-[0.85rem] text-black/50 mt-1">
         Don&apos;t have an account?{' '}
-        <button
-          type="button"
-          onClick={onSwitchTab}
+        <a
+          href="/register"
           className="text-[#E8622A] font-medium hover:opacity-70 transition-opacity"
         >
           Sign up free
-        </button>
+        </a>
       </p>
     </form>
   );

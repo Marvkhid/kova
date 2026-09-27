@@ -7,7 +7,7 @@
 // ============================================================
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { useAuth, useUser } from '@clerk/nextjs';
+import { useAuth, useUser } from '@/lib/auth-provider';
 import { api, ApiError } from '@/lib/api';
 import { track } from '@/lib/analytics';
 import type { Product } from '@/lib/types';

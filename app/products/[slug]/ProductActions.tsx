@@ -7,7 +7,7 @@
 // ============================================================
 
 import { useEffect, useState } from 'react';
-import { useAuth } from '@clerk/nextjs';
+import { useAuth } from '@/lib/auth-provider';
 import { useRouter } from 'next/navigation';
 import { useCart } from '@/features/cart/CartContext';
 import { useWishlist } from '@/lib/hooks/useWishlist';

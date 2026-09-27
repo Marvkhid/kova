@@ -7,7 +7,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { useAuth } from '@clerk/nextjs';
+import { useAuth } from '@/lib/auth-provider';
 import { api, ApiError } from '@/lib/api';
 import { useToast } from '@/app/Component/ToastContext';
 import { ProductCard } from '@/app/Component/ProductCard';

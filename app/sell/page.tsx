@@ -9,7 +9,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useAuth, useUser } from '@clerk/nextjs';
+import { useAuth, useUser } from '@/lib/auth-provider';
 import { api, ApiError } from '@/lib/api';
 import { useToast } from '@/app/Component/ToastContext';
 import { track } from '@/lib/analytics';
