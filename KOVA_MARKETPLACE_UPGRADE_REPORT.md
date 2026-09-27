@@ -110,7 +110,31 @@ Using real Clerk bearer tokens in the browser against the running API:
 
 **Known scope notes (not silently faked):** the five sellers are Postgres demo identities (`demo_*` clerkIds) — they
 are not Clerk accounts, so you cannot *log in as* them without creating matching Clerk users; payments/checkout
-remain intentionally unavailable (honest UI messaging). Seeded imagery is real CC0 photography (Openverse, 320
-first-party files in `kova/public/images/seed/photo/`) — every product, store banner/logo, category tile and empty
-state renders a genuine photograph; no icons, emoji or SVG placeholders anywhere in the UI. Sellers replace these
-with their own uploads through the Cloudinary pipeline.
+remain intentionally unavailable (honest UI messaging). Seeded imagery is real photography: every product now
+carries 3–4 **product-matched** images (name → description → images → category all correspond), fetched from
+Wikimedia Commons and Openverse CC0/CC-BY per product (401 unique products, attributions in
+`kova-api/scripts/products-manifest.json`), with store banners/logos, category tiles and empty states using the
+first-party CC0 pool in `kova/public/images/seed/photo/`. No icons, emoji or SVG placeholders anywhere in the UI.
+Sellers replace these with their own uploads through the Cloudinary pipeline.
+
+---
+
+## Clerk phone-number restriction — "Phone numbers from this country (Nigeria) are currently not supported" (2026-09-27)
+
+**Root cause (verified, not guessed):** The Clerk instance (`proud-starling-8`, dev) has **phone_number enabled as a *required* sign-up identifier** (confirmed via FAPI `/v1/environment`: `identification_strategies` includes `phone_number`; the widget renders a required Phone field defaulting to NG +234; and Clerk's own Backend API rejects user creation without a phone — `form_data_missing: ["phone_number"]`). Separately, **Clerk does not support Nigerian (+234) phone numbers at all** — reproducing through the Backend API returns the exact error `unsupported_country_code: Phone numbers from this country (Nigeria) are currently not supported`. This is a Clerk-side platform limitation, not a bug in Kova's code (no Kova code sends phone numbers).
+
+**Fixable only in the Clerk Dashboard** (the Backend API exposes no sign-up-attribute settings; the Platform config API is private beta):
+1. Sign in at https://dashboard.clerk.com → app **proud-starling-8**.
+2. **User & Authentication → Email, Phone, Username** → turn **Phone number** OFF (or set it to optional/unrequired for sign-up).
+3. While there: **Sign-in/Sign-up settings** — consider disabling **SMS (phone code) as a 2FA/multi-session factor** (the instance currently forces 2FA on sign-in, and one account has SMS 2FA enrolled — that seller cannot complete sign-in while SMS exists).
+4. For Nigerian users, rely on **email + password (or Google OAuth)** — both fully work today.
+
+**Instance changes made during verification (all reverted):** enabled Clerk dev *test mode* briefly to exercise phone verification with test numbers (`+1 555 555 0187`, verified OK), then returned it to `false` (PATCH 204). Two throwaway Clerk users (`kova.phonetest+2@kova.dev`, `kova_e2e_demo@kova.dev`) were created during the run; delete them in the dashboard if undesired.
+
+### E2E verification (all executed, no mocks)
+- **Auth chain:** Clerk session (created via official sign-in-token + FAPI `ticket` strategy, and testing-token where bot protection would block automation) → 60s session **JWT** → NestJS `verifyToken()` (JWKS) → auto-sync to **Postgres** (`/api/users/me` → 200, `role: BUYER`, correct name/email/avatar). Guards return 401 without/with invalid tokens. Wrong passwords rejected.
+- **2FA:** instance currently **requires a second factor at sign-in** (email_code). This will affect every real sign-in until relaxed in the dashboard.
+- **Bot protection:** Cloudflare **Turnstile** is active on sign-up/sign-in — it loops indefinitely inside automated browsers (Playwright-style control), which is expected; real users pass it. Clerk's official **testing token** mechanism was used to verify flows programmatically.
+- **Seller flow:** ticket sign-in as the real seller1 → fresh JWT → `POST /api/products` (validation guards verified: category check, ≥3-images-before-publish rule) → **201 PUBLISHED** with 3 real images → visible via `/api/sellers/store/sellerone-integration-store` → **deleted** after verification (owner-only auth confirmed).
+- **Buyer flow:** product detail (id) 200; wishlist add/list **201/200** (item verified, then removed); cart add/list with `x-session-id` **201/200** (then cleared). Cart is guest-session based by design; checkout is deliberately disabled (Paystack keys present but out of scope).
+- **DB/migrations:** `prisma migrate deploy` → "No pending migrations to apply" (4 migrations in place). Seed intact: 1,020 products (985 PUBLISHED), 6 sellers, 26 users, 691 orders.
