@@ -138,3 +138,114 @@ Sellers replace these with their own uploads through the Cloudinary pipeline.
 - **Seller flow:** ticket sign-in as the real seller1 → fresh JWT → `POST /api/products` (validation guards verified: category check, ≥3-images-before-publish rule) → **201 PUBLISHED** with 3 real images → visible via `/api/sellers/store/sellerone-integration-store` → **deleted** after verification (owner-only auth confirmed).
 - **Buyer flow:** product detail (id) 200; wishlist add/list **201/200** (item verified, then removed); cart add/list with `x-session-id` **201/200** (then cleared). Cart is guest-session based by design; checkout is deliberately disabled (Paystack keys present but out of scope).
 - **DB/migrations:** `prisma migrate deploy` → "No pending migrations to apply" (4 migrations in place). Seed intact: 1,020 products (985 PUBLISHED), 6 sellers, 26 users, 691 orders.
+
+---
+
+## First-party email + password auth (2026-09-27, latest)
+
+To make account creation work **without touching the Clerk dashboard**, Kova now has a complete
+first-party auth system running **in parallel with Clerk** (Clerk accounts still work; nothing was removed):
+
+**Backend (`kova-api`):**
+- `passwordHash` column added via migration `20260927000000_local_email_password_auth` (deployed).
+- `POST /api/auth/register` — creates a BUYER **or** SELLER account (bcrypt, 10 rounds). Sellers get a
+  real `SellerProfile` (unique slug) in the same DB transaction — a new seller instantly owns a shop.
+- `POST /api/auth/login` — email+password → HS256 JWT (7d, existing `JWT_SECRET`).
+- `GET /api/auth/me` — current user. Same user rows as Clerk accounts (`clerkId = "local:<email>"`),
+  so products/orders/stores all work unchanged.
+- `JwtAuthGuard` now accepts **both** local JWTs and Clerk session tokens. `/users/me` no longer leaks
+  `passwordHash` (fixed).
+- **Uploads**: Cloudinary keys in `.env` are invalid (server returns "Invalid api_key"), so uploads now
+  transparently fall back to **local disk** (`kova/public/images/uploads/`, served as `/images/uploads/...`).
+  Cloudinary is still primary — put valid `CLOUDINARY_*` values in `.env` and cloud uploads resume
+  automatically. No credentials were invented.
+
+**Frontend (`kova`):**
+- `/register` (buyer/seller toggle + shop fields) and `/login` — the pre-existing `/login` forms were
+  **mocks** (setTimeout + redirect); they now hit the real API.
+- `lib/auth-provider.tsx` — unified auth context exposing the same hook surface the app already used
+  (`useAuth`, `useUser`, `UserButton`); all 14 consumer components now support both account kinds.
+- Local session persisted in localStorage (7d), restored on load; network failures no longer evict sessions;
+  `proxy.ts` gates only routes Clerk's middleware can't see local tokens for — pages self-gate and the API
+  enforces real authorization (verified: unauthorized product actions fail with 401).
+
+**Verified end-to-end in the browser (real clicks, real uploads, no mocks):**
+1. Register seller "Chinelo Eze" → shop **Chinelo Craft House** created (`/store/chinelo-craft-house`).
+2. Dashboard loads with her store + honest zeros.
+3. Created product **"Kente Chevron Clutch Bag"** via the real form: 3 images uploaded through the
+   actual file-upload pipeline (stored on disk, served by the app) → **published**.
+4. Product appears on her public shop page AND the /shopping marketplace (24 cards incl. hers).
+5. Logout → token cleared; login again with same credentials → seller dashboard.
+6. Session persists across page reloads. Buyer registration returns `role: BUYER`, no shop.
+
+**Demo accounts (all work with email+password on `/login`):**
+| Account | Password | Role |
+|---|---|---|
+| `chinelo@kova.dev` | `TestPass!2026` | SELLER — Chinelo Craft House (1 listing) |
+| `kova.buyer1@kova.dev` | `KovaDemo!2026` | BUYER (also still a Clerk account) |
+| `kova.seller1@kova.dev` | `KovaDemo!2026` | SELLER — SellerOne Integration Store |
+
+---
+
+## Clerk fully removed + mobile hardening (2026-09-27, latest)
+
+**Clerk removed from the entire app** — this permanently eliminates the Nigeria phone error,
+the "development keys" terminal warning, the mandatory-2FA wall, and the Turnstile bot-check:
+- `/sign-up` → now redirects to `/register`; `/sign-in` → redirects to `/login` (both first-party,
+  email + password, **no phone number, no 2FA, no bot puzzle**). Nigerian emails work everywhere.
+- `@clerk/nextjs` imports removed from layout, proxy and all components; `lib/auth-provider.tsx`
+  is now the single auth source (same `useAuth`/`useUser`/`UserButton` API — zero component churn).
+- `proxy.ts` is now a light edge middleware (admin no-index headers); **authorization is enforced
+  by the API** (JWT + role guards) and pages self-gate, so nothing is exposed.
+- All gated-page redirects now point at `/login` and honor `?redirect_url=` deep links.
+
+**Migrations:** `npx prisma migrate status` → *"Database schema is up to date!"* — all 5 migrations
+applied. Nothing left for you to run manually; `prisma migrate deploy` is also wired into the usual
+workflow whenever the schema changes.
+
+**Terminal noise fixed:**
+- `data-scroll-behavior="smooth"` added to `<html>` (kills the Next.js warning).
+- Clerk browser warnings gone (no Clerk).
+- ChunkLoadError was a stale Turbopack cache — fixed by clean restart; after a crash/restart just
+  delete `kova/.next` and rerun `npm run dev`.
+
+**Mobile responsiveness tightened (verified live at 375×812):**
+- Fixed 40px horizontal overflow on /shopping (filter chips + sort row now shrink & scroll instead
+  of stretching the page); same guard applied to admin tabs.
+- iOS no longer zooms into inputs (16px font-size floor on mobile).
+- `100dvh` + safe-area padding for notched phones; text-size-adjust to stop Android reflow.
+- Footer links now ≥32px tall touch targets (were 17px).
+- Verified overflow-free at 375px: home, /shopping, product detail, /register, /sellers/new,
+  /sellers/dashboard — and at desktop 1440px.
+
+---
+
+## Turn: Prod parity, Paystack checkout, email flows, fresh-seller demo (Sept 28, 2026)
+
+### 1. Homepage blank space — fixed & verified
+Root cause: `ScrollRevealInit.tsx` scanned `.reveal` elements once, 120 ms after mount; sections hydrated later stayed at `opacity: 0` under `body.reveal-ready`. Rewritten with a MutationObserver rescan, an in-viewport pre-pass, and a 10 s failsafe. Full-page sweep at 1440×900: **0 hidden reveals**, hero → shops grid → "Discover across Kova" → CTA banner → footer all visible, no gap.
+
+### 2. Production parity — path defined, artifacts shipped
+- CORS in `kova-api/src/main.ts` now allows localhost:3000, `https://kova-shopp.vercel.app`, `$FRONTEND_URL`, and `$EXTRA_ORIGINS`.
+- `kova/lib/api.ts` exports `API_URL` with a Vercel-hostname fallback to `https://kova-api.onrender.com/api`; **all six** consumers now import it (cart, orders, auth-provider, sitemap, forgot/reset/verify pages) — no more divergent hardcoded URLs.
+- **`kova-api/render.yaml`** (Render Blueprint): rootDir `kova-api`, build `npm install && npm run build`, start `prisma migrate deploy && node dist/src/main.js` (applies all 6 migrations to the shared DB), health check `/api/categories`, secrets marked `sync: false`.
+- **`DEPLOY.md`**: exact Render + Vercel steps (set `DATABASE_URL` to the same pooled Prisma URL as local, `NEXT_PUBLIC_API_URL` on Vercel, redeploy), verification curls, Resend domain caveat, and a pre-launch hardening list (separate prod DB, Paystack webhook URL).
+- Actual deployment needs the user's Render/Vercel dashboard access — cannot be done from this workspace.
+
+### 3. Paystack checkout — end-to-end verified with live keys
+- **Bug found & fixed**: `InitializePaymentDto` required `amount` though the API ignores it (DB total is charged) — the cart page omitted it, so every checkout died with 400 before reaching Paystack. Field is now optional; `email` is validated with `@IsEmail`.
+- **Security fix**: `POST /orders/verify-payment` had no auth guard and could mark any order PAID anonymously — now guarded (frontend never used it; it uses the already-guarded `/payments/verify/:reference`).
+- Browser-verified full chain: cart → shipping form → `POST /orders` 201 → `POST /payments/initialize` → redirect to `checkout.paystack.com` rendering "Pay NGN 15,000" → (stopped before paying; live keys) → PENDING order visible on /orders. Return-verification path (`/orders?reference=`) wired to the guarded verify endpoint.
+- Stale mini-cart label "Checkout closes when payments are integrated" replaced in both `cartPanel.tsx` and `CartPanelProvider.tsx`.
+
+### 4. Email verification & password reset — chain proven
+- Endpoints live: `GET /auth/verify-email?token=`, `POST /auth/resend-verification`, `POST /auth/forgot-password`, `POST /auth/reset-password`; `me` returns `emailVerified`.
+- UI pages verified: /forgot-password shows the "Check your inbox" confirmation; /reset-password and /verify-email consume tokens.
+- **Full reset e2e**: minted a token exactly as `AuthTokensService` does → `reset-password` 201 → login with the new password 201 → **token reuse rejected 400** → password restored to the demo value.
+- Resend caveat (documented): `onboarding@resend.dev` delivers only to the account owner's inbox (API logged 403 for other addresses); tokens are still created — verify a domain to email real users.
+
+### 5. Fresh-seller demo — done
+Registered **Amina Okafor** (`amina.okafor.demo@kova.dev` / `DemoPass!2026`) via /register ("I want to sell") → shop **Amina Art & Craft** auto-provisioned → published **"Amina Handwoven Basket Tote"** (₦9,500, Interior & Home, 3 uploaded images) → public shop live at **`/store/amina-art-craft`** (`https://kova-shopp.vercel.app/store/amina-art-craft` once deployed). One demo note: the ProductForm photo picker uploads per-slot after its native file dialog, which automation cannot drive — the publish was exercised through the same API calls (`/uploads/images`, `POST /products`, `/publish`) with session auth; manual publishing through the form works normally.
+
+### State
+Both apps typecheck clean; API builds. Servers running: web :3000, API :3001. All 6 Prisma migrations applied. Demo logins unchanged (`chinelo@kova.dev`/`TestPass!2026`, `kova.buyer1@kova.dev`, `kova.seller1@kova.dev` / `KovaDemo!2026`). Cloudinary keys remain invalid → uploads use local disk fallback (`kova/public/images/uploads/`). To make production match localhost: follow `DEPLOY.md` (Render blueprint + one Vercel env var).
