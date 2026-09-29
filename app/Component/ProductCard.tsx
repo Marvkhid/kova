@@ -13,6 +13,7 @@ import { useCart } from '@/features/cart/CartContext';
 import { useWishlist } from '@/lib/hooks/useWishlist';
 import { useToast } from './ToastContext';
 import { Badge, StarRating } from '../ui/Atom';
+import { VerifiedSellerBadge } from './VerifiedSellerBadge';
 import { formatPrice } from '@/lib/utils/index';
 import { track } from '@/lib/analytics';
 import { productPhoto } from '@/lib/photo-fallback';
@@ -72,7 +73,7 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
   async function handleToggleWishlist(e: React.MouseEvent) {
     e.preventDefault();
     if (!isSignedIn) {
-      router.push('/sign-in');
+      router.push('/login');
       return;
     }
     try {
@@ -189,7 +190,10 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
             ].join(' ')}
             aria-label={storeSlug ? `Visit ${sellerName}'s shop` : undefined}
           >
-            {sellerName}
+            <span className="inline-flex items-center gap-1.5">
+              {sellerName}
+              {product.seller?.sellerProfile?.isVerified && <VerifiedSellerBadge />}
+            </span>
           </span>
 
           <p

@@ -258,7 +258,7 @@ function CartPanel({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }
             </div>
 
             <p className="text-center text-[0.7rem] text-black/30 mt-3">
-              Checkout closes when payments are integrated
+              Payments processed securely by Paystack
             </p>
           </div>
         )}

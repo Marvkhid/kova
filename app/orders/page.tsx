@@ -9,6 +9,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { useAuth } from '@/lib/auth-provider';
 import { api, ApiError } from '@/lib/api';
 import { formatPrice } from '@/lib/utils';
@@ -234,12 +235,30 @@ export default function OrdersPage() {
   const { addToast } = useToast();
   const [orders, setOrders] = useState<Order[] | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     if (!isLoaded || !isSignedIn) return;
     let alive = true;
-    api
-      .getMyOrders()
+
+    // Paystack redirects back here with ?reference=<ref> — verify it,
+    // which confirms the payment server-side, then load orders.
+    const reference = searchParams?.get('reference');
+    const verifyFirst = reference
+      ? api
+          .verifyPayment(reference)
+          .then(() => {
+            addToast('Payment confirmed — thank you!', 'success');
+            // Clean the URL so refresh does not re-verify.
+            window.history.replaceState({}, '', '/orders');
+          })
+          .catch(() => {
+            addToast('Payment could not be verified — contact support if you were charged.', 'error');
+          })
+      : Promise.resolve();
+
+    verifyFirst
+      .then(() => api.getMyOrders())
       .then((res) => { if (alive) setOrders(res); })
       .catch((e) => {
         if (!alive) return;
@@ -247,7 +266,7 @@ export default function OrdersPage() {
         setOrders([]);
       });
     return () => { alive = false; };
-  }, [isLoaded, isSignedIn]);
+  }, [isLoaded, isSignedIn, searchParams, addToast]);
 
   return (
     <div className="min-h-screen bg-[#F5F0E8]">
@@ -285,7 +304,7 @@ export default function OrdersPage() {
               Your order history is tied to your account.
             </p>
             <Link
-              href="/sign-in?redirect_url=%2Forders"
+              href="/login"
               className="px-7 py-3 rounded-full bg-[#0D0D0D] text-[#F5F0E8] font-medium hover:bg-[#1A1A1A] transition-colors inline-block"
             >
               Sign in

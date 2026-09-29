@@ -48,7 +48,7 @@ export function ProductActions({ product }: { product: Product }) {
 
   async function handleWishlist() {
     if (!isSignedIn) {
-      router.push('/sign-in');
+      router.push('/login');
       return;
     }
     try {

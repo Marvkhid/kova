@@ -4,15 +4,27 @@
 // ============================================================
 
 export type ProductType = 'PHYSICAL' | 'DIGITAL';
-export type ProductStatus = 'DRAFT' | 'PUBLISHED' | 'UNPUBLISHED' | 'REMOVED';
+export type ProductStatus =
+  | 'DRAFT'
+  | 'PENDING_REVIEW'
+  | 'PUBLISHED'
+  | 'REJECTED'
+  | 'UNPUBLISHED'
+  | 'REMOVED';
 export type ProductBadge = 'new' | 'hot' | 'sale';
 export type Role = 'BUYER' | 'SELLER' | 'ADMIN';
+
+/** Seller governance lifecycle (SellerProfile.sellerStatus). */
+export type SellerStatus = 'PENDING' | 'APPROVED' | 'REJECTED' | 'SUSPENDED' | 'BLOCKED';
+
+/** Version of the Seller Terms the seller accepted. */
+export const SELLER_TERMS_VERSION = '1.0';
 
 export interface SellerRef {
   id: string;
   name: string | null;
   avatarUrl?: string | null;
-  sellerProfile?: { storeName: string; storeSlug: string } | null;
+  sellerProfile?: { storeName: string; storeSlug: string; isVerified?: boolean } | null;
 }
 
 export interface CategoryRef {
@@ -36,6 +48,8 @@ export interface Product {
   reviewCount: number;
   buyCount?: number;
   viewCount?: number;
+  /** Set when a moderator rejects/removes the listing (dashboard rows). */
+  moderationReason?: string | null;
   createdAt?: string;
   categoryId?: string | null;
   category?: CategoryRef | null;
@@ -76,10 +90,55 @@ export interface SellerProfile {
   storeName: string;
   storeSlug: string;
   description?: string | null;
+  location?: string | null;
+  category?: string | null;
+  phone?: string | null;
   logoUrl?: string | null;
   bannerUrl?: string | null;
   isVerified: boolean;
-  user?: { name: string | null; email: string; avatarUrl?: string | null };
+  sellerStatus?: SellerStatus;
+  appliedAt?: string | null;
+  approvedAt?: string | null;
+  rejectedAt?: string | null;
+  rejectionReason?: string | null;
+  termsVersion?: string | null;
+  termsAcceptedAt?: string | null;
+  user?: { name: string | null; email: string; avatarUrl?: string | null; phone?: string | null };
+}
+
+/** Admin queue row — GET /admin/sellers */
+export interface SellerApplicationRow {
+  id: string;
+  userId: string;
+  storeName: string;
+  storeSlug: string;
+  description?: string | null;
+  location?: string | null;
+  category?: string | null;
+  logoUrl?: string | null;
+  bannerUrl?: string | null;
+  sellerStatus: SellerStatus;
+  phone?: string | null;
+  email: string;
+  ownerName?: string | null;
+  ownerAvatarUrl?: string | null;
+  registeredAt: string;
+  appliedAt?: string | null;
+  approvedAt?: string | null;
+  rejectedAt?: string | null;
+  suspendedAt?: string | null;
+  rejectionReason?: string | null;
+  termsVersion?: string | null;
+  termsAcceptedAt?: string | null;
+  productCount: number;
+}
+
+/** Admin review screen — GET /admin/sellers/:id */
+export interface SellerApplicationDetail extends SellerApplicationRow {
+  ownerBio?: string | null;
+  adminNote?: string | null;
+  orderCount: number;
+  products: Product[];
 }
 
 /** Homepage featured-sellers card — computed server-side from live data. */
@@ -96,11 +155,15 @@ export type FeaturedSeller = {
   previewProducts: Pick<Product, 'id' | 'name' | 'slug' | 'price' | 'images' | 'rating' | 'reviewCount' | 'productType'>[];
 };
 
-export interface SellerDashboardResponse {
+export interface  SellerDashboardResponse {
   stats: {
     totalProducts: number;
     published: number;
     drafts: number;
+    /** Listings awaiting admin moderation (PENDING_REVIEW). */
+    pendingReview?: number;
+    /** Listings rejected by moderation, with the reason on each row. */
+    rejected?: number;
     unpublished: number;
     digital: number;
     physical: number;
@@ -113,6 +176,11 @@ export interface SellerDashboardResponse {
   profile: SellerProfile | null;
 }
 
+export interface SellerDashboardStatsExtra {
+  pendingReview?: number;
+  rejected?: number;
+}
+
 export interface WishlistItem {
   id: string;
   productId: string;
@@ -122,6 +190,13 @@ export interface WishlistItem {
 
 export interface AdminOverview {
   users: { total: number; buyers: number; sellers: number; admins: number };
+  moderation: {
+    pendingSellerApplications: number;
+    approvedSellers: number;
+    suspendedSellers: number;
+    pendingProductReviews: number;
+    rejectedProducts: number;
+  };
   products: {
     total: number;
     published: number;
@@ -250,9 +325,13 @@ export interface SellerStore {
   storeSlug: string;
   description?: string | null;
   location?: string | null;
+  category?: string | null;
   logoUrl?: string | null;
   bannerUrl?: string | null;
   isVerified: boolean;
+  ownerAvatarUrl?: string | null;
+  joinedAt?: string;
+  categories?: CategoryRef[];
   /** New paginated payload fields (backend now sends these). */
   ownerName?: string | null;
   totalProducts?: number;

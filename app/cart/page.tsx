@@ -1,23 +1,94 @@
 'use client';
 
+// ============================================================
+// KOVA — /cart
+// Real checkout: creates an order on the API, then redirects to
+// Paystack's hosted payment page. The API locks prices and
+// computes shipping authoritatively; /orders confirms payment
+// when Paystack redirects back.
+// ============================================================
+
 import Link from 'next/link';
 import { useState } from 'react';
 import { useCart } from '@/features/cart/CartContext';
+import { useAuth } from '@/lib/auth-provider';
+import { api, ApiError } from '@/lib/api';
 import { productPhoto } from '@/lib/photo-fallback';
 import { useToast } from '@/app/Component/ToastContext';
 import { formatPrice } from '@/lib/utils';
 
+// Mirrors the API's shipping rules (₦2,500 physical, free over
+// ₦50,000, digital-only free). The API recomputes authoritatively.
+function estimateShipping(items: { product: { productType: string } }[], subtotal: number) {
+  const hasPhysical = items.some((i) => i.product.productType === 'PHYSICAL');
+  return hasPhysical && subtotal < 50000 ? 2500 : 0;
+}
+
+interface ShippingForm {
+  fullName: string;
+  phone: string;
+  address: string;
+  city: string;
+  state: string;
+}
+
+const SHIPPING_FIELDS: Array<[keyof ShippingForm, string, string]> = [
+  ['fullName', 'Full name', 'Chidi Okafor'],
+  ['phone', 'Phone', '0801 234 5678'],
+  ['address', 'Address', '12 Awolowo Road'],
+  ['city', 'City', 'Ikoyi'],
+  ['state', 'State', 'Lagos'],
+];
+
 export default function CartPage() {
   const { items, total, updateQuantity, removeItem, clearCart } = useCart();
+  const { user, isSignedIn, isLoaded } = useAuth();
   const { addToast } = useToast();
-  const [checkoutNotice, setCheckoutNotice] = useState(false);
+  const [showShipping, setShowShipping] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [shipping, setShipping] = useState<ShippingForm>({
+    fullName: '',
+    phone: '',
+    address: '',
+    city: '',
+    state: '',
+  });
 
-  // Payments are not integrated yet — no shipping model exists, so no
-  // fee is calculated or displayed. Checkout is explicitly unavailable.
-  function handleCheckout() {
-    setCheckoutNotice(true);
-    addToast('Checkout is not available yet — online payments are coming soon.', 'error');
+  const ship = estimateShipping(items, total);
+  const grandTotal = total + ship;
+
+  async function placeOrder() {
+    setBusy(true);
+    try {
+      // 1. Create the order (API locks prices + computes shipping).
+      const order = await api.createOrder({
+        items: items.map((i) => ({ productId: i.product.id, quantity: i.quantity })),
+        shippingAddress: { ...shipping },
+      });
+
+      // 2. Initialize the Paystack payment for that order.
+      const pay = await api.initializePayment({
+        orderId: order.id,
+        email: user!.email,
+      });
+
+      // 3. Hand off to Paystack's hosted page.
+      window.location.href = pay.authorizationUrl;
+    } catch (err) {
+      addToast(
+        err instanceof ApiError ? err.message : 'Could not start checkout — try again.',
+        'error',
+      );
+      setBusy(false);
+    }
   }
+
+  const shippingValid =
+    shipping.fullName.trim().length >= 2 &&
+    shipping.phone.trim().length >= 7 &&
+    shipping.address.trim().length >= 5 &&
+    shipping.city.trim().length >= 2 &&
+    shipping.state.trim().length >= 2;
 
   return (
     <div className="min-h-screen bg-[#F5F0E8] px-4 sm:px-6 py-8">
@@ -102,7 +173,7 @@ export default function CartPage() {
               ))}
             </div>
 
-            {/* Summary */}
+            {/* Summary + checkout */}
             <aside className="bg-white rounded-[16px] sm:rounded-[20px] border border-black/[0.08] p-4 sm:p-5 h-fit">
               <h2 className="font-bold text-[1rem] text-[#0D0D0D] mb-4" style={{ fontFamily: 'var(--font-display)' }}>
                 Summary
@@ -113,24 +184,66 @@ export default function CartPage() {
                   <span className="text-black/55">Subtotal</span>
                   <span className="font-medium">{formatPrice(total)}</span>
                 </div>
+                <div className="flex justify-between">
+                  <span className="text-black/55">Shipping</span>
+                  <span className="font-medium">{ship === 0 ? 'Free' : formatPrice(ship)}</span>
+                </div>
                 <div className="flex justify-between font-bold pt-2 border-t border-black/[0.08]">
                   <span>Total</span>
-                  <span>{formatPrice(total)}</span>
+                  <span>{formatPrice(grandTotal)}</span>
                 </div>
               </div>
 
-              <button
-                type="button"
-                onClick={handleCheckout}
-                className="w-full mt-4 py-2.5 rounded-full bg-[#E8622A] text-white text-sm font-medium hover:bg-[#F07A48] transition-colors"
-              >
-                Checkout
-              </button>
-              {checkoutNotice && (
-                <p className="mt-2 text-[0.78rem] text-black/55 text-center">
-                  Online payments are not integrated yet — nothing has been charged.
-                </p>
+              {!isLoaded ? null : !isSignedIn ? (
+                <Link
+                  href="/login?redirect_url=%2Fcart"
+                  className="block text-center w-full mt-4 py-2.5 rounded-full bg-[#E8622A] text-white text-sm font-medium hover:bg-[#F07A48] transition-colors"
+                >
+                  Log in to check out
+                </Link>
+              ) : showShipping ? (
+                <div className="mt-4 flex flex-col gap-3">
+                  <p className="text-[0.8rem] font-semibold text-black/60">Delivery details</p>
+                  {SHIPPING_FIELDS.map(([field, label, ph]) => (
+                    <input
+                      key={field}
+                      type="text"
+                      value={shipping[field]}
+                      onChange={(e) => setShipping((s) => ({ ...s, [field]: e.target.value }))}
+                      placeholder={`${label} — ${ph}`}
+                      aria-label={label}
+                      className="w-full bg-[#F5F0E8] border border-black/[0.09] rounded-[10px] h-[42px] px-3 text-[0.86rem] outline-none focus:border-[#E8622A] transition-all"
+                    />
+                  ))}
+                  <button
+                    type="button"
+                    disabled={busy || !shippingValid}
+                    onClick={placeOrder}
+                    className="w-full py-2.5 rounded-full bg-[#E8622A] text-white text-sm font-medium hover:bg-[#F07A48] transition-colors disabled:opacity-50"
+                  >
+                    {busy ? 'Redirecting to Paystack…' : `Pay ${formatPrice(grandTotal)}`}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowShipping(false)}
+                    className="text-[0.76rem] text-black/45 hover:text-black transition-colors"
+                  >
+                    ← Back to summary
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setShowShipping(true)}
+                  className="w-full mt-4 py-2.5 rounded-full bg-[#E8622A] text-white text-sm font-medium hover:bg-[#F07A48] transition-colors"
+                >
+                  Checkout securely
+                </button>
               )}
+
+              <p className="mt-2 text-[0.7rem] text-black/40 text-center">
+                Payments processed securely by Paystack.
+              </p>
 
               <button
                 type="button"

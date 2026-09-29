@@ -242,7 +242,9 @@ export function ProductForm({
   }
 
   // ── Validation (mirrors backend rules) ──
-  function validate(): boolean {
+  // Drafts skip the image minimum (backend only validates on publish), so a
+  // PENDING seller can prepare a listing now and add photos before publishing.
+  function validate(intent?: 'draft' | 'publish' | 'save'): boolean {
     const next: Record<string, string> = {};
     if (name.trim().length < 3) next.name = 'Product name must be at least 3 characters.';
     if (description.trim().length < 20) next.description = 'Describe the product in at least 20 characters.';
@@ -254,7 +256,7 @@ export function ProductForm({
       else if (!next.price && op <= p) next.originalPrice = 'Original price should be higher than the current price.';
     }
     if (!categorySlug) next.category = 'Choose a category.';
-    if (productType === 'PHYSICAL' && filledCount < MIN_PHYSICAL_IMAGES) {
+    if (productType === 'PHYSICAL' && filledCount < MIN_PHYSICAL_IMAGES && intent !== 'draft') {
       next.images = `Physical products need at least ${MIN_PHYSICAL_IMAGES} images (front, back, side) before publishing.`;
     }
     setErrors(next);
@@ -278,7 +280,7 @@ export function ProductForm({
   // ── Submit ──
   async function submit(intent: 'draft' | 'publish' | 'save') {
     setServerErrors([]);
-    if (!validate()) {
+    if (!validate(intent)) {
       addToast('Please fix the highlighted fields.', 'error');
       return;
     }

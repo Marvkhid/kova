@@ -47,6 +47,10 @@ html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* Prevent iOS/Android auto-inflation when rotating or zooming —
+     a common source of mobile layout breakage. */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 body {
@@ -56,7 +60,25 @@ body {
   font-size: 1rem;
   line-height: 1.6;
   overflow-x: hidden;
+  /* Correct 100vh on mobile browsers with dynamic toolbars. */
+  min-height: 100dvh;
 }
+
+/* Keep iOS from zooming into < 16px inputs on focus (mangles layout).
+   Applied on small screens only, where it matters. */
+@media (max-width: 767px) {
+  input, textarea, select { font-size: max(16px, 1em) !important; }
+  /* Touch-friendly footer links (WCAG/Apple recommend ≥44px targets). */
+  footer a { display: inline-block; padding: 10px 0; }
+}
+
+/* Safe-area padding for notched phones (home indicator / notch). */
+@supports (padding: env(safe-area-inset-bottom)) {
+  body { padding-bottom: env(safe-area-inset-bottom); }
+}
+
+/* Wide tables / pre blocks never blow out small viewports. */
+pre, table { max-width: 100%; overflow-x: auto; }
 
 img, video { display: block; max-width: 100%; }
 button { font-family: var(--font-body); cursor: pointer; border: none; background: none; }

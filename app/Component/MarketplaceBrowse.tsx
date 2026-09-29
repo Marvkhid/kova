@@ -227,8 +227,10 @@ export function MarketplaceBrowse({
       <div className="sticky top-[64px] z-30 bg-[#F5F0E8]/95 backdrop-blur-md border-b border-black/[0.07]">
         <div className="max-w-[1280px] mx-auto px-4 sm:px-5 md:px-8 py-3.5 flex flex-col gap-3">
           <div className="flex items-center justify-between gap-3 flex-wrap">
-            {/* Category pills */}
-            <div className="flex gap-2 overflow-x-auto pb-0.5 -mb-0.5" role="tablist" aria-label="Categories">
+            {/* Category pills — min-w-0 lets the strip shrink inside its
+                flex parent so wide chip rows scroll instead of stretching
+                the page (fixes mobile horizontal overflow). */}
+            <div className="flex gap-2 overflow-x-auto pb-0.5 -mb-0.5 min-w-0 max-w-full" role="tablist" aria-label="Categories">
               <FilterPill active={!category} onClick={() => setCategory('')} label="All" />
               {categories.map((cat) => (
                 <FilterPill
@@ -240,7 +242,7 @@ export function MarketplaceBrowse({
               ))}
             </div>
 
-            <div className="flex items-center gap-2 flex-shrink-0">
+            <div className="flex items-center gap-2 min-w-0 max-w-full">
               {/* Type filter */}
               <div className="flex rounded-full border border-black/[0.09] bg-white overflow-hidden">
                 {TYPE_OPTIONS.map((opt) => (

@@ -5,9 +5,9 @@
 // ============================================================
 
 import type { MetadataRoute } from 'next';
+import { API_URL } from '@/lib/api';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://kova-shopp.vercel.app';
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001/api';
 
 export const revalidate = 3600; // hourly
 

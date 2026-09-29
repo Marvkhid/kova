@@ -19,7 +19,8 @@ import { SellerOrdersPanel } from '@/app/Component/dashboard/SellerOrdersPanel';
 import { ShopSettingsPanel } from '@/app/Component/dashboard/ShopSettingsPanel';
 import { formatPrice } from '@/lib/utils';
 import { track } from '@/lib/analytics';
-import type { SellerDashboardResponse } from '@/lib/types';
+import { SELLER_TERMS_VERSION } from '@/lib/types';
+import type { SellerDashboardResponse, SellerStatus } from '@/lib/types';
 
 // ── Status pill ───────────────────────────────────────────
 
@@ -27,13 +28,127 @@ function StatusPill({ status }: { status: string }) {
   const cfg: Record<string, string> = {
     PUBLISHED: 'bg-[#2A5C45]/[0.12] text-[#2A5C45]',
     DRAFT: 'bg-black/[0.06] text-black/50',
+    PENDING_REVIEW: 'bg-[#F4A438]/[0.16] text-[#9A6B10]',
+    REJECTED: 'bg-red-100 text-red-600',
     UNPUBLISHED: 'bg-[#F4A438]/[0.14] text-[#9A6B10]',
     REMOVED: 'bg-red-100 text-red-500',
   };
   return (
     <span className={`text-[0.6rem] font-semibold uppercase tracking-[0.07em] px-2 py-[3px] rounded-full ${cfg[status] ?? cfg.DRAFT}`}>
-      {status.toLowerCase()}
+      {status.toLowerCase().replace('_', ' ')}
     </span>
+  );
+}
+
+// ── Seller status banner ──────────────────────────────────
+
+function SellerStatusBanner({
+  status,
+  reason,
+  onResubmit,
+  resubmitting,
+  onOpenSettings,
+}: {
+  status: SellerStatus;
+  reason: string | null | undefined;
+  onResubmit: () => void;
+  resubmitting: boolean;
+  onOpenSettings: () => void;
+}) {
+  if (status === 'APPROVED') {
+    return (
+      <div className="bg-[#2A5C45]/[0.08] border border-[#2A5C45]/20 rounded-[14px] px-4 sm:px-5 py-3.5 flex items-center gap-3 mb-7">
+        <span className="w-7 h-7 rounded-full bg-[#2A5C45] text-white flex items-center justify-center flex-shrink-0" aria-hidden="true">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M20 6 9 17l-5-5" />
+          </svg>
+        </span>
+        <div>
+          <p className="text-[0.82rem] font-semibold text-[#2A5C45]">Store approved</p>
+          <p className="text-[0.74rem] text-black/45">Your store is live — publish listings whenever you&apos;re ready.</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (status === 'PENDING') {
+    return (
+      <div className="bg-[#F4A438]/[0.1] border border-[#F4A438]/30 rounded-[14px] px-4 sm:px-5 py-3.5 flex items-start gap-3 mb-7">
+        <span className="w-7 h-7 rounded-full bg-[#F4A438] text-white flex items-center justify-center flex-shrink-0" aria-hidden="true">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" />
+          </svg>
+        </span>
+        <div>
+          <p className="text-[0.82rem] font-semibold text-[#9A6B10]">Application under review</p>
+          <p className="text-[0.74rem] text-black/50 leading-relaxed">
+            Our team is reviewing your store. You can prepare listings now — publishing unlocks the moment
+            your store is approved, and we&apos;ll email you the decision.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (status === 'REJECTED') {
+    return (
+      <div className="bg-red-50 border border-red-200 rounded-[14px] px-4 sm:px-5 py-3.5 flex flex-col sm:flex-row sm:items-center gap-3 mb-7">
+        <div className="flex items-start gap-3 flex-1">
+          <span className="w-7 h-7 rounded-full bg-red-500 text-white flex items-center justify-center flex-shrink-0" aria-hidden="true">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
+              <path d="M18 6 6 18M6 6l12 12" />
+            </svg>
+          </span>
+          <div>
+            <p className="text-[0.82rem] font-semibold text-red-600">Application not approved</p>
+            {reason && <p className="text-[0.76rem] text-red-500/90 mt-0.5">Reason: {reason}</p>}
+            <p className="text-[0.74rem] text-black/50 mt-1">
+              Update your store profile, then resubmit for review.
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <button
+            type="button"
+            onClick={onOpenSettings}
+            className="px-4 py-2 rounded-full border border-black/12 bg-white text-[0.74rem] font-semibold text-[#0D0D0D] hover:border-black/30 transition-colors"
+          >
+            Edit profile
+          </button>
+          <button
+            type="button"
+            onClick={onResubmit}
+            disabled={resubmitting}
+            className="px-4 py-2 rounded-full bg-[#E8622A] text-white text-[0.74rem] font-semibold hover:bg-[#F07A48] disabled:opacity-50 transition-colors flex items-center gap-1.5"
+          >
+            {resubmitting && <span className="w-3 h-3 rounded-full border-2 border-white/40 border-t-white animate-spin" aria-hidden="true" />}
+            Resubmit for review
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // SUSPENDED / BLOCKED
+  const suspended = status === 'SUSPENDED';
+  return (
+    <div className={`rounded-[14px] px-4 sm:px-5 py-3.5 flex items-start gap-3 mb-7 ${suspended ? 'bg-[#F4A438]/[0.1] border border-[#F4A438]/30' : 'bg-red-50 border border-red-200'}`}>
+      <span className={`w-7 h-7 rounded-full text-white flex items-center justify-center flex-shrink-0 ${suspended ? 'bg-[#F4A438]' : 'bg-red-500'}`} aria-hidden="true">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 9v4M12 17h.01" /><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" />
+        </svg>
+      </span>
+      <div>
+        <p className={`text-[0.82rem] font-semibold ${suspended ? 'text-[#9A6B10]' : 'text-red-600'}`}>
+          {suspended ? 'Store suspended' : 'Store blocked'}
+        </p>
+        {reason && <p className="text-[0.76rem] text-black/55 mt-0.5">Reason: {reason}</p>}
+        <p className="text-[0.74rem] text-black/50 mt-1">
+          Your listings are hidden from the marketplace while your store is {suspended ? 'suspended' : 'blocked'}.
+          Contact support to resolve this.
+        </p>
+      </div>
+    </div>
   );
 }
 
@@ -42,9 +157,11 @@ function StatusPill({ status }: { status: string }) {
 function ListingRow({
   product,
   onChanged,
+  canPublish,
 }: {
   product: SellerDashboardResponse['products'][number];
   onChanged: () => void;
+  canPublish: boolean;
 }) {
   const { addToast } = useToast();
   const [busy, setBusy] = useState(false);
@@ -96,6 +213,11 @@ function ListingRow({
         <p className="text-[0.7rem] sm:text-[0.75rem] text-black/40 mt-0.5">
           {formatPrice(product.price)} · {product.viewCount ?? 0} views
         </p>
+        {product.status === 'REJECTED' && (
+          <p className="text-[0.72rem] text-red-500 mt-1">
+            Moderator note: {product.moderationReason || 'This listing was not approved for the marketplace.'}
+          </p>
+        )}
       </div>
 
       {/* Actions */}
@@ -118,14 +240,15 @@ function ListingRow({
         ) : (
           <button
             type="button"
-            disabled={busy}
+            disabled={busy || !canPublish}
+            title={canPublish ? undefined : 'Your store must be approved before listings can go live'}
             onClick={() =>
               act(async () => {
                 await api.publishProduct(product.id);
                 track.productPublished({ id: product.id, productType: product.productType });
               }, 'Listing published — it is live on the marketplace.')
             }
-            className="px-3 h-8 rounded-full bg-[#0D0D0D] text-[#F5F0E8] text-[0.72rem] font-medium hover:bg-[#E8622A] transition-colors disabled:opacity-50"
+            className="px-3 h-8 rounded-full bg-[#0D0D0D] text-[#F5F0E8] text-[0.72rem] font-medium hover:bg-[#E8622A] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
           >
             Publish
           </button>
@@ -199,9 +322,11 @@ function EmptyState() {
 export default function SellerDashboardPage() {
   const router = useRouter();
   const { isLoaded, isSignedIn } = useAuth();
+  const { addToast } = useToast();
   const [data, setData] = useState<SellerDashboardResponse | null>(null);
   const [state, setState] = useState<'loading' | 'ready' | 'error'>('loading');
   const [tab, setTab] = useState<'listings' | 'orders' | 'shop'>('listings');
+  const [resubmitting, setResubmitting] = useState(false);
 
   const load = useCallback(async () => {
     try {
@@ -220,11 +345,24 @@ export default function SellerDashboardPage() {
 
   useEffect(() => {
     if (isLoaded && !isSignedIn) {
-      router.replace('/sign-in?redirect_url=%2Fsellers%2Fdashboard');
+      router.replace('/login');
       return;
     }
     if (isLoaded && isSignedIn) load();
   }, [isLoaded, isSignedIn, load, router]);
+
+  async function resubmitApplication() {
+    setResubmitting(true);
+    try {
+      await api.submitSellerApplication(SELLER_TERMS_VERSION);
+      addToast('Application resubmitted — our team will review it again.');
+      await load();
+    } catch (err) {
+      addToast(err instanceof ApiError ? err.message : 'Could not resubmit. Try again.', 'error');
+    } finally {
+      setResubmitting(false);
+    }
+  }
 
   if (!isLoaded || state === 'loading') {
     return (
@@ -265,6 +403,8 @@ export default function SellerDashboardPage() {
 
   const { stats, products, profile } = data;
   const hasListings = products.length > 0;
+  const sellerStatus: SellerStatus = profile?.sellerStatus ?? 'PENDING';
+  const canPublish = sellerStatus === 'APPROVED';
 
   return (
     <div className="min-h-screen bg-[#F5F0E8]">
@@ -311,6 +451,15 @@ export default function SellerDashboardPage() {
           )}
         </div>
 
+        {/* Governance status banner */}
+        <SellerStatusBanner
+          status={sellerStatus}
+          reason={profile?.rejectionReason}
+          onResubmit={resubmitApplication}
+          resubmitting={resubmitting}
+          onOpenSettings={() => setTab('shop')}
+        />
+
         {/* Stats — honest zeros */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8 sm:mb-10">
           <Stat label="Total listings" value={stats.totalProducts} />
@@ -324,6 +473,12 @@ export default function SellerDashboardPage() {
           <span><strong className="text-[#0D0D0D]">{stats.physical}</strong> physical</span>
           <span><strong className="text-[#0D0D0D]">{stats.digital}</strong> digital</span>
           <span><strong className="text-[#0D0D0D]">{stats.drafts}</strong> drafts</span>
+          {(stats.pendingReview ?? 0) > 0 && (
+            <span><strong className="text-[#9A6B10]">{stats.pendingReview}</strong> in review</span>
+          )}
+          {(stats.rejected ?? 0) > 0 && (
+            <span><strong className="text-red-500">{stats.rejected}</strong> rejected</span>
+          )}
           <span><strong className="text-[#0D0D0D]">{stats.unpublished}</strong> unpublished</span>
           <span><strong className="text-[#0D0D0D]">{stats.totalSales}</strong> units sold</span>
           <span><strong className="text-[#0D0D0D]">{formatPrice(stats.totalRevenue)}</strong> revenue</span>
@@ -373,7 +528,7 @@ export default function SellerDashboardPage() {
           {hasListings ? (
             <div className="bg-white rounded-[16px] sm:rounded-[20px] border border-black/[0.07] px-4 sm:px-5">
               {products.map((p) => (
-                <ListingRow key={p.id} product={p} onChanged={load} />
+                <ListingRow key={p.id} product={p} onChanged={load} canPublish={canPublish} />
               ))}
             </div>
           ) : (

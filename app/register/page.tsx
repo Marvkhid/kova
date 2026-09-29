@@ -185,12 +185,6 @@ export default function RegisterPage() {
             Log in
           </Link>
         </p>
-        <p className="text-center text-black/30 text-[0.74rem] mt-3">
-          Prefer Google or phone?{' '}
-          <Link href="/sign-up" className="underline hover:text-black/50">
-            Use the original sign-up
-          </Link>
-        </p>
       </div>
     </div>
   );

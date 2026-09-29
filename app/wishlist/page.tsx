@@ -73,7 +73,7 @@ export default function WishlistPage() {
             Saved items sync to your account — they follow you across devices.
           </p>
           <Link
-            href="/sign-in?redirect_url=%2Fwishlist"
+            href="/login"
             className="inline-block px-8 py-3 rounded-full bg-[#0D0D0D] text-[#F5F0E8] font-medium hover:bg-[#1A1A1A] transition-colors"
           >
             Sign in to continue

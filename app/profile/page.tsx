@@ -7,15 +7,22 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useAuth, useUser } from '@/lib/auth-provider';
-import { api } from '@/lib/api';
+import { api, ApiError } from '@/lib/api';
+import { useToast } from '@/app/Component/ToastContext';
 import type { Product } from '@/lib/types';
 
 export default function ProfilePage() {
-  const { isLoaded, isSignedIn } = useAuth();
+  const { isLoaded, isSignedIn, logout } = useAuth();
   const { user, isLoaded: userLoaded } = useUser();
+  const { addToast } = useToast();
+  const router = useRouter();
   const [wishlist, setWishlist] = useState<Product[]>([]);
   const [wishlistState, setWishlistState] = useState<'loading' | 'ready' | 'error'>('loading');
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState('');
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     if (!isSignedIn) return;
@@ -66,7 +73,7 @@ export default function ProfilePage() {
             Your account, wishlist and seller dashboard all live behind one sign-in.
           </p>
           <Link
-            href="/sign-in?redirect_url=%2Fprofile"
+            href="/login"
             className="inline-block px-8 py-3 rounded-full bg-[#0D0D0D] text-[#F5F0E8] font-medium hover:bg-[#1A1A1A] transition-colors"
           >
             Sign in
@@ -74,6 +81,19 @@ export default function ProfilePage() {
         </div>
       </div>
     );
+  }
+
+  async function handleDeleteAccount() {
+    setDeleting(true);
+    try {
+      await api.deleteMyAccount();
+      addToast('Your account and everything tied to it has been deleted.');
+      await logout();
+      router.replace('/');
+    } catch (err) {
+      addToast(err instanceof ApiError ? err.message : 'Could not delete your account. Try again.', 'error');
+      setDeleting(false);
+    }
   }
 
   const displayName = user.fullName ?? user.username ?? 'Your account';
@@ -253,9 +273,76 @@ export default function ProfilePage() {
                 Sell on KOVA →
               </Link>
             </div>
+
+            {/* Danger zone — self-service account deletion */}
+            <div className="bg-white rounded-[16px] sm:rounded-[20px] border border-red-200 p-6 sm:p-7">
+              <h2 className="font-extrabold text-[1rem] text-red-600 mb-2" style={{ fontFamily: 'var(--font-display)' }}>
+                Danger zone
+              </h2>
+              <p className="text-[0.82rem] text-black/50 leading-relaxed mb-4">
+                Deleting your account erases your profile, wishlist, orders and — if you have a
+                store — the store with all of its listings. This cannot be undone.
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  setDeleteConfirmText('');
+                  setDeleteOpen(true);
+                }}
+                className="px-5 py-2.5 rounded-full border border-red-300 text-red-600 text-[0.8rem] font-semibold hover:bg-red-50 transition-colors"
+              >
+                Delete my account…
+              </button>
+            </div>
           </div>
         </div>
       </div>
+
+      {/* ── Delete-account confirm (typed) ── */}
+      {deleteOpen && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 p-4" role="dialog" aria-modal="true" aria-label="Confirm account deletion">
+          <div className="bg-white rounded-[20px] border border-black/[0.08] p-6 sm:p-8 w-full max-w-[440px]">
+            <h3 className="font-extrabold text-[1.05rem] text-red-600 mb-2" style={{ fontFamily: 'var(--font-display)' }}>
+              Delete your account permanently?
+            </h3>
+            <p className="text-[0.84rem] text-black/55 leading-relaxed mb-4">
+              Your profile, wishlist, orders and any seller store — including all its listings — will be
+              erased. This cannot be undone.
+            </p>
+            <label htmlFor="selfDeleteConfirm" className="block text-[0.76rem] font-semibold text-[#0D0D0D] mb-1.5">
+              Type <span className="font-mono bg-[#F5F0E8] px-1.5 py-0.5 rounded">DELETE</span> to confirm
+            </label>
+            <input
+              id="selfDeleteConfirm"
+              type="text"
+              value={deleteConfirmText}
+              onChange={(e) => setDeleteConfirmText(e.target.value)}
+              placeholder="DELETE"
+              className="w-full rounded-[12px] bg-[#F5F0E8] border border-black/[0.09] text-[0.9rem] text-[#0D0D0D] px-4 h-[48px] outline-none focus:border-red-400 focus:ring-2 focus:ring-red-400/15 transition-all"
+              autoFocus
+            />
+            <div className="flex justify-end gap-2.5 mt-6">
+              <button
+                type="button"
+                onClick={() => setDeleteOpen(false)}
+                disabled={deleting}
+                className="px-5 py-2.5 rounded-full border border-black/12 text-[0.8rem] font-semibold text-[#0D0D0D] hover:bg-black/[0.04] transition-colors disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={deleting || deleteConfirmText !== 'DELETE'}
+                onClick={handleDeleteAccount}
+                className="px-5 py-2.5 rounded-full bg-red-600 text-white text-[0.8rem] font-semibold hover:bg-red-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+              >
+                {deleting && <span className="w-3.5 h-3.5 rounded-full border-2 border-white/40 border-t-white animate-spin" aria-hidden="true" />}
+                Delete account
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

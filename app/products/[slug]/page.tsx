@@ -11,6 +11,7 @@ import { api } from '@/lib/api';
 import { ProductGallery } from '@/app/Component/ProductGallery';
 import { ProductActions } from './ProductActions';
 import { ProductCard } from '@/app/Component/ProductCard';
+import { VerifiedSellerBadge } from '@/app/Component/VerifiedSellerBadge';
 import { ReviewSection } from '@/app/Component/ReviewSection';
 import { SectionLabel } from '@/app/ui/Atom';
 import { formatPrice } from '@/lib/utils';
@@ -219,6 +220,9 @@ export default async function ProductPage({ params }: PageProps) {
                   <p className="font-semibold text-[0.88rem] text-[#0D0D0D] truncate" style={{ fontFamily: 'var(--font-display)' }}>
                     {storeName}
                   </p>
+                  {product.seller?.sellerProfile?.isVerified && (
+                    <VerifiedSellerBadge variant="inline" className="mt-0.5" />
+                  )}
                 </div>
                 {product.seller?.sellerProfile?.storeSlug && (
                   <Link

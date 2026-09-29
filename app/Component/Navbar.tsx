@@ -148,7 +148,7 @@ function MobileDrawer({
           <div className="flex flex-col gap-2 pt-1">
             {!isSignedIn && (
               <Link
-                href="/sign-in"
+                href="/login"
                 onClick={onClose}
                 className="text-center py-3 rounded-[12px] text-base font-medium text-[#0D0D0D] hover:bg-black/[0.06] transition-colors"
               >
@@ -268,7 +268,7 @@ export function Navbar() {
           <div className="hidden md:flex items-center gap-2">
             {!isSignedIn && (
               <Link
-                href="/sign-in"
+                href="/login"
                 className="px-4 py-2 rounded-full text-sm font-medium text-[#0D0D0D]/70 hover:text-[#0D0D0D] hover:bg-black/[0.06] transition-all duration-200"
               >
                 Log in

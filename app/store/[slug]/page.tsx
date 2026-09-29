@@ -72,6 +72,11 @@ export default async function StorePage({ params, searchParams }: PageProps) {
   const rating = store.userId ? await getSellerRating(store.userId) : null;
   const products = store.products ?? store.user?.products ?? [];
   const ownerName = store.ownerName ?? store.user?.name ?? store.storeName;
+  const avatarUrl = store.logoUrl ?? store.ownerAvatarUrl ?? null;
+  const joined = store.joinedAt
+    ? new Date(store.joinedAt).toLocaleDateString(undefined, { month: 'long', year: 'numeric' })
+    : null;
+  const categories = store.categories ?? [];
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -108,9 +113,9 @@ export default async function StorePage({ params, searchParams }: PageProps) {
           <div className="flex flex-col sm:flex-row sm:items-center gap-5">
             <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full border-4 border-white bg-[#0D0D0D] text-[#F5F0E8] flex items-center justify-center font-extrabold text-2xl flex-shrink-0 overflow-hidden shadow-md"
               style={{ fontFamily: 'var(--font-display)' }}>
-              {store.logoUrl ? (
+              {avatarUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={store.logoUrl} alt="" className="w-full h-full object-cover" />
+                <img src={avatarUrl} alt="" className="w-full h-full object-cover" />
               ) : (
                 store.storeName.charAt(0).toUpperCase()
               )}
@@ -131,9 +136,24 @@ export default async function StorePage({ params, searchParams }: PageProps) {
                 )}
               </div>
               <p className="text-[0.8rem] text-black/45 mt-1">
-                {store.location ? `${store.location}, Nigeria · ` : ''}
+                {store.location ? `${store.location} · ` : ''}
                 {products.length} published product{products.length === 1 ? '' : 's'}
+                {joined ? ` · joined ${joined}` : ''}
               </p>
+
+              {/* Category chips */}
+              {categories.length > 0 && (
+                <div className="flex flex-wrap gap-1.5 mt-2.5">
+                  {categories.slice(0, 6).map((c) => (
+                    <span
+                      key={c.slug}
+                      className="text-[0.66rem] font-semibold text-[#0D0D0D]/70 bg-[#F5F0E8] border border-black/[0.06] rounded-full px-2.5 py-1"
+                    >
+                      {c.name}
+                    </span>
+                  ))}
+                </div>
+              )}
 
               {/* Seller rating — from SellerReview rows only */}
               <div className="mt-2.5">

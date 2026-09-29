@@ -21,7 +21,7 @@ export default function NewProductPage() {
 
   useEffect(() => {
     if (isLoaded && !isSignedIn) {
-      router.replace('/sign-in?redirect_url=%2Fsellers%2Fnew');
+      router.replace('/login');
       return;
     }
     if (isLoaded && isSignedIn) {

@@ -46,7 +46,14 @@ export function LoginForm({ onSwitchTab: _onSwitchTab }: LoginFormProps) {
 
     try {
       const user = await login(email, password);
-      if (user.role === 'SELLER' && user.sellerProfile) {
+      // Honor ?redirect_url= when present (deep links from gated pages).
+      const redirectUrl =
+        typeof window !== 'undefined'
+          ? new URLSearchParams(window.location.search).get('redirect_url')
+          : null;
+      if (redirectUrl && redirectUrl.startsWith('/')) {
+        router.push(redirectUrl);
+      } else if (user.role === 'SELLER' && user.sellerProfile) {
         router.push('/sellers/dashboard');
       } else {
         router.push('/shopping');
@@ -99,6 +106,12 @@ export function LoginForm({ onSwitchTab: _onSwitchTab }: LoginFormProps) {
       )}
 
       <AuthSubmitButton loading={loading}>Log in to KOVA</AuthSubmitButton>
+
+      <div className="flex justify-end -mt-1">
+        <a href="/forgot-password" className="text-[0.76rem] sm:text-[0.78rem] text-[#E8622A] hover:opacity-70 transition-opacity">
+          Forgot password?
+        </a>
+      </div>
 
       <p className="text-center text-[0.82rem] sm:text-[0.85rem] text-black/50 mt-1">
         Don&apos;t have an account?{' '}

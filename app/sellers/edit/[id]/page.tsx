@@ -25,7 +25,7 @@ export default function EditProductPage() {
 
   useEffect(() => {
     if (isLoaded && !isSignedIn) {
-      router.replace(`/sign-in?redirect_url=${encodeURIComponent(`/sellers/edit/${id ?? ''}`)}`);
+      router.replace(`/login?redirect_url=${encodeURIComponent(`/sellers/edit/${id ?? ''}`)}`);
       return;
     }
     if (!isLoaded || !isSignedIn || !id) return;

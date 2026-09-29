@@ -1,49 +1,33 @@
 // ============================================================
-// KOVA — Proxy (route protection)
-// Public: browsing, search, products, seller landing, auth.
-// Protected: dashboards, wishlist, checkout, admin.
-// Server-side authorization is ALSO enforced by the API —
-// this only handles the redirect UX.
+// KOVA — Proxy (edge middleware)
+// KOVA's authorization is enforced end-to-end by the API
+// (JWT bearer auth + role guards on every protected endpoint)
+// and pages self-gate client-side (signed-out users are
+// redirected to /login by the shared auth hooks).
+//
+// Clerk middleware was removed together with the Clerk sign-in/
+// sign-up widgets: the Clerk instance required a phone number
+// as a mandatory identifier and rejected Nigerian (+234)
+// numbers entirely, blocking sign-up for Nigerian users. The
+// first-party email + password auth (/register, /login) has no
+// such restriction.
+//
+// Network-level tweaks live here:
+//   • /admin is not indexable and gets a strict referrer policy.
 // ============================================================
 
-import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
+import { NextResponse, type NextRequest } from 'next/server';
 
-const isPublicRoute = createRouteMatcher([
-  '/',
-  '/products(.*)',
-  '/shopping(.*)',
-  '/search(.*)',
-  '/deals(.*)',
-  '/services(.*)',
-  '/sellers',           // seller landing page
-  '/sellers/store(.*)', // legacy public store path
-  '/sellers/dashboard(.*)', // self-gating: page redirects signed-out users, API enforces authz (needed for local email+password accounts whose JWT lives in localStorage, invisible to Clerk middleware)
-  '/sellers/new(.*)',       // same self-gating pattern
-  '/sellers/edit(.*)',      // same self-gating pattern
-  '/wishlist(.*)',          // same self-gating pattern
-  '/profile(.*)',           // same self-gating pattern
-  '/orders(.*)',            // same self-gating pattern
-  '/store(.*)',         // public shop pages /store/[slug]
-  '/about(.*)',
-  '/contact(.*)',
-  '/sign-in(.*)',
-  '/sign-up(.*)',
-  '/login(.*)',
-  '/register(.*)',
-  '/api/webhook(.*)',
-]);
+export default function proxy(request: NextRequest) {
+  const response = NextResponse.next();
 
-const isAdminRoute = createRouteMatcher(['/admin(.*)']);
-
-export default clerkMiddleware(async (auth, req) => {
-  if (isAdminRoute(req)) {
-    // Basic auth check here; the ADMIN role is verified server-side
-    // by the API (a BUYER signed-in user will simply see no data).
-    await auth.protect();
-  } else if (!isPublicRoute(req)) {
-    await auth.protect();
+  if (request.nextUrl.pathname.startsWith('/admin')) {
+    response.headers.set('X-Robots-Tag', 'noindex');
+    response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
   }
-});
+
+  return response;
+}
 
 export const config = {
   matcher: [

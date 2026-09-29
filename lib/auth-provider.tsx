@@ -1,15 +1,14 @@
 'use client';
 
 // ============================================================
-// KOVA — Unified Auth Context
-// Merges TWO auth sources into one hook surface that mirrors
-// the Clerk API surface the app already uses:
-//   1. Clerk (existing accounts, Google OAuth)
-//   2. KOVA local accounts (email + password via /api/auth/*)
-// Components import useAuth/useUser/UserButton from this module
-// (or keep importing from @clerk/nextjs — both work). Signed-in
-// state, token plumbing and the account menu behave identically
-// for both account types.
+// KOVA — Unified Auth Context (first-party, no Clerk)
+// Single auth source for the whole app:
+//   • register → /api/auth/register (buyer OR seller + shop)
+//   • login    → /api/auth/login    (bcrypt + 7-day JWT)
+//   • session  → JWT in localStorage, restored on load
+// Exposes useAuth / useUser / UserButton — the same hook
+// surface the app has always used — so every component works
+// unchanged, now without any third-party auth dependency.
 // ============================================================
 
 import {
@@ -22,14 +21,9 @@ import {
   type ReactNode,
 } from 'react';
 import { useRouter } from 'next/navigation';
-import {
-  useAuth as useClerkAuth,
-  useUser as useClerkUser,
-  UserButton as ClerkUserButton,
-} from '@clerk/nextjs';
-import { api, registerAuthTokenProvider } from '@/lib/api';
+import { api, registerAuthTokenProvider, API_URL } from '@/lib/api';
 
-// ── Local account storage ────────────────────────────────
+// ── Local session storage ────────────────────────────────
 
 const LS_TOKEN_KEY = 'kova_local_token';
 
@@ -61,16 +55,15 @@ function decodeJwtPayload(token: string): any | null {
   }
 }
 
-// ── Context shape (mirrors the Clerk surface we use) ──────
+// ── Context shape ─────────────────────────────────────────
 
 interface UnifiedAuth {
   isLoaded: boolean;
   isSignedIn: boolean;
-  authKind: 'local' | 'clerk' | null;
-  /** Works for BOTH auth kinds; used by the API client. */
+  /** Works for ALL authenticated requests; used by the API client. */
   getToken: () => Promise<string | null>;
-  localUser: LocalUser | null;
-  refreshLocalUser: () => Promise<void>;
+  user: LocalUser | null;
+  refreshUser: () => Promise<void>;
   login: (email: string, password: string) => Promise<LocalUser>;
   register: (input: {
     name: string;
@@ -85,10 +78,9 @@ interface UnifiedAuth {
 
 const AuthContext = createContext<UnifiedAuth | null>(null);
 
-export function LocalAuthProvider({ children }: { children: ReactNode }) {
-  const clerk = useClerkAuth();
+export function KovaAuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
-  const [localUser, setLocalUser] = useState<LocalUser | null>(null);
+  const [user, setUser] = useState<LocalUser | null>(null);
   const [tokenReady, setTokenReady] = useState(false);
   const [restoreDone, setRestoreDone] = useState(false);
 
@@ -106,53 +98,52 @@ export function LocalAuthProvider({ children }: { children: ReactNode }) {
     setTokenReady(true);
   }, []);
 
-  const refreshLocalUser = useCallback(async () => {
+  const refreshUser = useCallback(async () => {
     const token = readStoredToken();
     if (!token) {
-      setLocalUser(null);
+      setUser(null);
       return;
     }
     try {
       registerAuthTokenProvider(async () => token);
       const me = await api.getMe();
-      setLocalUser(me as LocalUser);
+      setUser(me as LocalUser);
     } catch (err) {
       // Only evict the session when the server REJECTS the token.
       // Network hiccups (server restarting, offline) must not log
       // the user out.
-      const status = err && typeof err === 'object' && 'status' in err ? (err as { status?: number }).status : undefined;
+      const status =
+        err && typeof err === 'object' && 'status' in err
+          ? (err as { status?: number }).status
+          : undefined;
       if (status === 401 || status === 403) {
         window.localStorage.removeItem(LS_TOKEN_KEY);
         registerAuthTokenProvider(async () => null);
-        setLocalUser(null);
+        setUser(null);
       }
-      // else: keep the token; the UI stays in its loading/anonymous
-      // state and the next navigation retries the restore.
+      // else: keep the token; the next navigation retries the restore.
     }
   }, []);
 
   useEffect(() => {
     if (!tokenReady) return;
     if (readStoredToken()) {
-      void refreshLocalUser().finally(() => setRestoreDone(true));
+      void refreshUser().finally(() => setRestoreDone(true));
     } else {
       setRestoreDone(true);
     }
-  }, [tokenReady, refreshLocalUser]);
+  }, [tokenReady, refreshUser]);
 
-  const login = useCallback(
-    async (email: string, password: string) => {
-      const res = await apiFetchAuth<{ token: string; user: LocalUser }>(
-        '/auth/login',
-        { email, password },
-      );
-      window.localStorage.setItem(LS_TOKEN_KEY, res.token);
-      registerAuthTokenProvider(async () => res.token);
-      setLocalUser(res.user);
-      return res.user;
-    },
-    [],
-  );
+  const login = useCallback(async (email: string, password: string) => {
+    const res = await apiFetchAuth<{ token: string; user: LocalUser }>(
+      '/auth/login',
+      { email, password },
+    );
+    window.localStorage.setItem(LS_TOKEN_KEY, res.token);
+    registerAuthTokenProvider(async () => res.token);
+    setUser(res.user);
+    return res.user;
+  }, []);
 
   const register = useCallback(
     async (input: {
@@ -169,7 +160,7 @@ export function LocalAuthProvider({ children }: { children: ReactNode }) {
       );
       window.localStorage.setItem(LS_TOKEN_KEY, res.token);
       registerAuthTokenProvider(async () => res.token);
-      setLocalUser(res.user);
+      setUser(res.user);
       return res.user;
     },
     [],
@@ -178,62 +169,37 @@ export function LocalAuthProvider({ children }: { children: ReactNode }) {
   const logout = useCallback(() => {
     window.localStorage.removeItem(LS_TOKEN_KEY);
     registerAuthTokenProvider(async () => null);
-    setLocalUser(null);
+    setUser(null);
     router.push('/');
     router.refresh();
   }, [router]);
 
-  const isLocalSignedIn = !!localUser;
-  const isSignedIn = isLocalSignedIn || !!clerk.isSignedIn;
+  const isSignedIn = !!user;
 
   const getToken = useCallback(async (): Promise<string | null> => {
-    if (isLocalSignedIn) return readStoredToken();
-    if (clerk.isSignedIn) {
-      try {
-        return await clerk.getToken();
-      } catch {
-        return null;
-      }
-    }
-    return null;
-  }, [isLocalSignedIn, clerk]);
-
-  // Make sure the API client always has a working provider
-  // (covers the Clerk-only case, which AuthBridge also handles).
-  useEffect(() => {
-    if (isSignedIn && !isLocalSignedIn) {
-      registerAuthTokenProvider(async () => {
-        try {
-          return await clerk.getToken();
-        } catch {
-          return null;
-        }
-      });
-    }
-  }, [isSignedIn, isLocalSignedIn, clerk]);
+    return readStoredToken();
+  }, []);
 
   const value = useMemo<UnifiedAuth>(
     () => ({
       // Match Clerk semantics: isLoaded only once the session state is
-      // actually known (local restore finished + Clerk booted).
-      isLoaded: tokenReady && restoreDone && (clerk.isLoaded ?? false),
+      // actually known (restore finished).
+      isLoaded: tokenReady && restoreDone,
       isSignedIn,
-      authKind: isLocalSignedIn ? 'local' : clerk.isSignedIn ? 'clerk' : null,
       getToken,
-      localUser,
-      refreshLocalUser,
+      user,
+      refreshUser,
       login,
       register,
       logout,
     }),
     [
       tokenReady,
-      clerk,
+      restoreDone,
       isSignedIn,
-      isLocalSignedIn,
       getToken,
-      localUser,
-      refreshLocalUser,
+      user,
+      refreshUser,
       login,
       register,
       logout,
@@ -243,26 +209,31 @@ export function LocalAuthProvider({ children }: { children: ReactNode }) {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
+// Back-compat alias (previous provider name).
+export const LocalAuthProvider = KovaAuthProvider;
+
 // Small fetch helper that does NOT attach auth headers (used only
 // for login/register before a token exists).
 async function apiFetchAuth<T>(path: string, body: unknown): Promise<T> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001/api'}${path}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
-  });
+  const res = await fetch(`${API_URL}${path}`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    },
+  );
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {
     throw new Error(
       (typeof data?.message === 'string' && data.message) ||
-      (Array.isArray(data?.message) && data.message.join(' · ')) ||
-      'Something went wrong',
+        (Array.isArray(data?.message) && data.message.join(' · ')) ||
+        'Something went wrong',
     );
   }
   return data as T;
 }
 
-// ── Shim hooks: drop-in compatible with Clerk's versions ──
+// ── Public hooks (same surface the app has always used) ──
 
 export interface KovaUseAuthReturn {
   isLoaded: boolean;
@@ -278,8 +249,7 @@ export interface KovaUseAuthReturn {
     storeDescription?: string;
   }) => Promise<LocalUser>;
   logout: () => void;
-  localUser: LocalUser | null;
-  authKind: 'local' | 'clerk' | null;
+  user: LocalUser | null;
 }
 
 export interface KovaUseUserReturn {
@@ -290,44 +260,26 @@ export interface KovaUseUserReturn {
     username: string | null;
     firstName: string | null;
     lastName: string | null;
-    /** Convenience: "firstName lastName" (or username / email local-part). */
+    /** Convenience: "firstName lastName" (or name / email local-part). */
     fullName: string | null;
     imageUrl: string;
     emailAddresses: Array<{ emailAddress: string; id: string }>;
     primaryEmailAddress: { emailAddress: string; id: string } | null;
-    externalAccounts: unknown[];
     createdAt: string;
   } | null;
 }
 
-/** Merged useAuth — local accounts report signed-in too. */
-export function useAuth(): KovaUseAuthReturn {
-  // Clerk hook must run unconditionally (rules of hooks).
-  const clerk = useClerkAuth();
+function contextOrThrow(): UnifiedAuth {
   const ctx = useContext(AuthContext);
   if (!ctx) {
-    // Fallback: Clerk-only (outside the provider).
-    return {
-      isLoaded: !!clerk.isLoaded,
-      isSignedIn: !!clerk.isSignedIn,
-      getToken: async () => {
-        try {
-          return (await clerk.getToken()) ?? null;
-        } catch {
-          return null;
-        }
-      },
-      login: async () => {
-        throw new Error('Local auth is not available here');
-      },
-      register: async () => {
-        throw new Error('Local auth is not available here');
-      },
-      logout: () => undefined,
-      localUser: null,
-      authKind: clerk.isSignedIn ? 'clerk' : null,
-    };
+    throw new Error('Kova auth hooks must be used inside <KovaAuthProvider>');
   }
+  return ctx;
+}
+
+/** Signed-in state + token access + login/register/logout. */
+export function useAuth(): KovaUseAuthReturn {
+  const ctx = contextOrThrow();
   return {
     isLoaded: ctx.isLoaded,
     isSignedIn: ctx.isSignedIn,
@@ -335,81 +287,44 @@ export function useAuth(): KovaUseAuthReturn {
     login: ctx.login,
     register: ctx.register,
     logout: ctx.logout,
-    localUser: ctx.localUser,
-    authKind: ctx.authKind,
+    user: ctx.user,
   };
 }
 
-/** Merged useUser — local accounts get a user object shaped like Clerk's. */
+/** Current user, shaped like the old Clerk user object. */
 export function useUser(): KovaUseUserReturn {
-  // Clerk hook must run unconditionally (rules of hooks).
-  const clerkUser = useClerkUser();
-  const ctx = useContext(AuthContext);
-
-  // Gate "loaded" on the local restore too — otherwise Clerk reports
-  // loaded (it only knows about ITS sessions) while the local session
-  // is still being restored, and pages redirect signed-in users.
-  if (ctx && !ctx.isLoaded) {
-    return { isLoaded: false, isSignedIn: false, user: null };
-  }
-
-  if (ctx?.localUser) {
-    const u = ctx.localUser;
-    return {
-      isLoaded: true,
-      isSignedIn: true,
-      user: {
-        id: u.id,
-        username: null,
-        firstName: u.name?.split(' ')[0] ?? null,
-        lastName: u.name?.split(' ').slice(1).join(' ') || null,
-        fullName: u.name ?? null,
-        imageUrl: u.avatarUrl ?? '',
-        emailAddresses: [{ emailAddress: u.email, id: 'local' }],
-        primaryEmailAddress: { emailAddress: u.email, id: 'local' },
-        externalAccounts: [],
-        createdAt: new Date().toISOString(),
-      },
-    };
-  }
-
-  const u = clerkUser.user;
+  const ctx = contextOrThrow();
+  const u = ctx.user;
   return {
-    isLoaded: clerkUser.isLoaded,
-    isSignedIn: !!clerkUser.isSignedIn,
+    isLoaded: ctx.isLoaded,
+    isSignedIn: ctx.isSignedIn,
     user: u
       ? {
           id: u.id,
-          username: u.username ?? null,
-          firstName: u.firstName ?? null,
-          lastName: u.lastName ?? null,
-          fullName: u.fullName ?? null,
-          imageUrl: u.imageUrl,
-          emailAddresses: u.emailAddresses.map((e) => ({ emailAddress: e.emailAddress, id: e.id })),
-          primaryEmailAddress: u.primaryEmailAddress
-            ? { emailAddress: u.primaryEmailAddress.emailAddress, id: u.primaryEmailAddress.id }
-            : null,
-          externalAccounts: u.externalAccounts,
-          createdAt: u.createdAt instanceof Date ? u.createdAt.toISOString() : String(u.createdAt),
+          username: null,
+          firstName: u.name?.split(' ')[0] ?? null,
+          lastName: u.name?.split(' ').slice(1).join(' ') || null,
+          fullName: u.name ?? null,
+          imageUrl: u.avatarUrl ?? '',
+          emailAddresses: [{ emailAddress: u.email, id: 'local' }],
+          primaryEmailAddress: { emailAddress: u.email, id: 'local' },
+          createdAt: new Date(0).toISOString(),
         }
       : null,
   };
 }
 
-/** Account menu for local accounts; renders Clerk's button for Clerk users. */
-export function UserButton(props: Record<string, unknown>) {
+/** Account menu avatar with links + sign out (renders nothing when signed out). */
+export function UserButton(_props?: Record<string, unknown>) {
   const ctx = useContext(AuthContext);
-  if (!ctx) return <ClerkUserButton {...(props as any)} />;
-  if (ctx.authKind === 'clerk' || !ctx.isSignedIn) {
-    return <ClerkUserButton {...(props as any)} />;
-  }
+  if (!ctx || !ctx.isSignedIn || !ctx.user) return null;
   return <LocalUserMenu />;
 }
 
 function LocalUserMenu() {
-  const ctx = useContext(AuthContext)!;
+  const ctx = contextOrThrow();
   const [open, setOpen] = useState(false);
-  const user = ctx.localUser;
+  const user = ctx.user;
 
   useEffect(() => {
     if (!open) return;
@@ -440,7 +355,7 @@ function LocalUserMenu() {
         {initials}
       </button>
       {open && (
-        <div className="absolute right-0 top-[calc(100%+8px)] w-56 bg-white rounded-[14px] border border-black/[0.08] shadow-xl p-2 z-[80]">
+        <div className="fixed sm:absolute right-3 sm:right-0 top-[60px] sm:top-[calc(100%+8px)] left-3 sm:left-auto w-auto sm:w-56 bg-white rounded-[14px] border border-black/[0.08] shadow-xl p-2 z-[80]">
           <div className="px-3 py-2 border-b border-black/[0.06] mb-1">
             <p className="font-semibold text-[0.82rem] text-[#0D0D0D] truncate">{user.name}</p>
             <p className="text-[0.7rem] text-black/45 truncate">{user.email}</p>
@@ -449,6 +364,24 @@ function LocalUserMenu() {
               {user.sellerProfile ? ` · ${user.sellerProfile.storeName}` : ''}
             </p>
           </div>
+          <a
+            href="/profile"
+            className="block px-3 py-2 rounded-[10px] text-[0.82rem] text-[#0D0D0D] hover:bg-black/[0.05]"
+          >
+            My profile
+          </a>
+          <a
+            href="/orders"
+            className="block px-3 py-2 rounded-[10px] text-[0.82rem] text-[#0D0D0D] hover:bg-black/[0.05]"
+          >
+            My orders
+          </a>
+          <a
+            href="/wishlist"
+            className="block px-3 py-2 rounded-[10px] text-[0.82rem] text-[#0D0D0D] hover:bg-black/[0.05]"
+          >
+            Wishlist
+          </a>
           {user.sellerProfile && (
             <>
               <a
