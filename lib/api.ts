@@ -27,14 +27,17 @@ import type {
 
 // API base URL resolution order:
 //   1. NEXT_PUBLIC_API_URL (set in Vercel/env — the source of truth)
-//   2. Production guess: https://kova-api.onrender.com/api (the default
-//      Render service name from DEPLOY.md — override with the env var)
+//   2. Same-origin fallback when the app is served from vercel.app (the
+//      frontend and API share an origin). Remove this when you point
+//      NEXT_PUBLIC_API_URL at the deployed backend.
 //   3. Local dev default
 function resolveApiUrl(): string {
   const fromEnv = process.env.NEXT_PUBLIC_API_URL;
   if (fromEnv) return fromEnv;
   if (typeof window !== 'undefined' && /vercel\.app$/.test(window.location.hostname)) {
-    return 'https://kova-api.onrender.com/api';
+    // Same-origin: the static app and the API live on the same host.
+    const origin = window.location.origin.replace(/\/?$/, '');
+    return `${origin}/api`;
   }
   return 'http://localhost:3001/api';
 }
