@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
-import { Syne, DM_Sans } from 'next/font/google';
 import { GoogleAnalytics } from '@next/third-parties/google';
 import './globals.css';
 
@@ -16,21 +15,6 @@ import { KovaAuthProvider } from '@/lib/auth-provider';
 import { RouteProgress } from './Component/RouteProgress';
 import { CartPanelProvider } from '@/features/cart/cartPanel';
 import { GA_MEASUREMENT_ID } from '@/lib/analytics';
-
-const syne = Syne({
-  subsets: ['latin'],
-  weight: ['400', '700', '800'],
-  variable: '--font-display',
-  display: 'swap',
-});
-
-const dmSans = DM_Sans({
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '600'],
-  style: ['normal', 'italic'],
-  variable: '--font-body',
-  display: 'swap',
-});
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://kova-shopp.vercel.app';
 
@@ -58,9 +42,17 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <KovaAuthProvider>
-      <html lang="en" data-scroll-behavior="smooth" className={`${syne.variable} ${dmSans.variable}`}>
+      <html lang="en" data-scroll-behavior="smooth">
         <head>
           <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+          {/* Fonts load in the browser (not at build time), so a build never
+              depends on reaching fonts.googleapis.com. */}
+          <link rel="preconnect" href="https://fonts.googleapis.com" />
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+          <link
+            rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..600;1,9..40,300..600&family=Syne:wght@400;700;800&display=swap"
+          />
         </head>
         <body className="min-h-screen flex flex-col">
           <CartProvider>

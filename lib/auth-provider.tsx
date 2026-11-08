@@ -49,7 +49,11 @@ function readStoredToken(): string | null {
 function decodeJwtPayload(token: string): any | null {
   try {
     const part = token.split('.')[1];
-    return JSON.parse(atob(part.replace(/-/g, '+').replace(/_/g, '/')));
+    if (!part) return null;
+    // atob() requires standard base64 with correct padding.
+    const normalized = part.replace(/-/g, '+').replace(/_/g, '/');
+    const padded = normalized + '='.repeat((4 - (normalized.length % 4)) % 4);
+    return JSON.parse(atob(padded));
   } catch {
     return null;
   }
